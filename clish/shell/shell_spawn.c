@@ -3,6 +3,7 @@
  */
 #include "private.h"
 #include "lub/string.h"
+#include "lub/system.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,27 +18,7 @@
 const char *default_path = "/etc/clish;~/.clish";
 
 /*-------------------------------------------------------- */
-/* perform a simple tilde substitution for the home directory
- * defined in HOME
- */
-static char *clish_shell_tilde_expand(const char *path)
-{
-	char *home_dir = getenv("HOME");
-	char *result = NULL;
-	char *tilde;
-
-	while ((tilde = strchr(path, '~'))) {
-		lub_string_catn(&result, path, tilde - path);
-		lub_string_cat(&result, home_dir);
-		path = tilde + 1;
-	}
-	lub_string_cat(&result, path);
-
-	return result;
-}
-
-/*-------------------------------------------------------- */
-void clish_shell_load_scheme(clish_shell_t * this, const char *xml_path)
+void clish_shell_load_scheme(clish_shell_t *this, const char *xml_path)
 {
 	const char *path = xml_path;
 	char *buffer;
@@ -48,7 +29,7 @@ void clish_shell_load_scheme(clish_shell_t * this, const char *xml_path)
 	if (!path)
 		path = default_path;
 	/* take a copy of the path */
-	buffer = clish_shell_tilde_expand(path);
+	buffer = lub_system_tilde_expand(path);
 
 	/* now loop though each directory */
 	for (dirname = strtok_r(buffer, ";", &saveptr);
