@@ -18,5 +18,6 @@
 /bin/clish
 /bin/konf
 /bin/konfd
+/bin/sigexec
 
 /klish-*.tar*
