@@ -230,7 +230,7 @@ int main(int argc, char **argv)
 		outfd = fopen("/dev/null", "w");
 	shell = clish_shell_new(&my_hooks, NULL, NULL, outfd, stop_on_error);
 	if (!shell) {
-		fprintf(stderr, "Cannot run clish.\n");
+		fprintf(stderr, "Can't run clish.\n");
 		goto end;
 	}
 	/* Load the XML files */
@@ -290,7 +290,7 @@ int main(int argc, char **argv)
 	/* Execute startup */
 	running = clish_shell_startup(shell);
 	if (running) {
-		fprintf(stderr, "Cannot startup clish.\n");
+		fprintf(stderr, "Can't startup clish.\n");
 		goto end;
 	}
 
