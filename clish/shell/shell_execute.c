@@ -44,7 +44,8 @@ static clish_shell_builtin_t clish_cmd_list[] = {
 
 /*----------------------------------------------------------- */
 /* Terminate the current shell session */
-static int clish_close(clish_context_t *context, const lub_argv_t * argv)
+static int clish_close(clish_context_t *context, const lub_argv_t *argv,
+	const char *script, char **out)
 {
 	/* the exception proves the rule... */
 	clish_shell_t *this = (clish_shell_t *)context->shell;
@@ -94,7 +95,8 @@ static int clish_source_internal(clish_context_t *context,
  thread. Invoking a script in this way will cause the script to
  stop on the first error
 */
-static int clish_source(clish_context_t *context, const lub_argv_t * argv)
+static int clish_source(clish_context_t *context, const lub_argv_t *argv,
+	const char *script, char **out)
 {
 	return (clish_source_internal(context, argv, BOOL_TRUE));
 }
@@ -105,7 +107,8 @@ static int clish_source(clish_context_t *context, const lub_argv_t * argv)
  thread. Invoking a script in this way will cause the script to
  continue after command, but not script, errors.
 */
-static int clish_source_nostop(clish_context_t *context, const lub_argv_t * argv)
+static int clish_source_nostop(clish_context_t *context, const lub_argv_t *argv,
+	const char *script, char **out)
 {
 	return (clish_source_internal(context, argv, BOOL_FALSE));
 }
@@ -114,7 +117,8 @@ static int clish_source_nostop(clish_context_t *context, const lub_argv_t * argv
 /*
  Show the shell overview
 */
-static int clish_overview(clish_context_t *context, const lub_argv_t * argv)
+static int clish_overview(clish_context_t *context, const lub_argv_t *argv,
+	const char *script, char **out)
 {
 	clish_shell_t *this = context->shell;
 	argv = argv; /* not used */
@@ -125,7 +129,8 @@ static int clish_overview(clish_context_t *context, const lub_argv_t * argv)
 }
 
 /*----------------------------------------------------------- */
-static int clish_history(clish_context_t *context, const lub_argv_t * argv)
+static int clish_history(clish_context_t *context, const lub_argv_t *argv,
+	const char *script, char **out)
 {
 	clish_shell_t *this = context->shell;
 	tinyrl_history_t *history = tinyrl__get_history(this->tinyrl);
@@ -377,7 +382,7 @@ int clish_shell_exec_action(clish_action_t *action,
 		}
 		/* invoke the builtin callback */
 		if (callback)
-			result = callback(context, argv);
+			result = callback(context, argv, script, out);
 		if (argv)
 			lub_argv_delete(argv);
 	} else if (script) {
@@ -393,7 +398,8 @@ int clish_shell_exec_action(clish_action_t *action,
 /*
  * Find out the previous view in the stack and go to it
  */
-static int clish_nested_up(clish_context_t *context, const lub_argv_t *argv)
+static int clish_nested_up(clish_context_t *context, const lub_argv_t *argv,
+	const char *script, char **out)
 {
 	clish_shell_t *this = context->shell;
 
@@ -416,7 +422,8 @@ static int clish_nested_up(clish_context_t *context, const lub_argv_t *argv)
 /*
  * Builtin: NOP function
  */
-static int clish_nop(clish_context_t *context, const lub_argv_t *argv)
+static int clish_nop(clish_context_t *context, const lub_argv_t *argv,
+	const char *script, char **out)
 {
 	return 0;
 }
@@ -425,7 +432,8 @@ static int clish_nop(clish_context_t *context, const lub_argv_t *argv)
 /*
  * Builtin: Set watchdog timeout. The "0" to turn watchdog off.
  */
-static int clish_wdog(clish_context_t *context, const lub_argv_t *argv)
+static int clish_wdog(clish_context_t *context, const lub_argv_t *argv,
+	const char *script, char **out)
 {
 	const char *arg = lub_argv__get_arg(argv, 0);
 	clish_shell_t *this = context->shell;
@@ -487,6 +495,5 @@ bool_t clish_shell__get_log(const clish_shell_t *this)
 	assert(this);
 	return this->log;
 }
-
 
 /*----------------------------------------------------------- */

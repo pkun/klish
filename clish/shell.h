@@ -213,14 +213,10 @@ typedef int clish_shell_log_fn_t(
   *
   */
 typedef int clish_shell_builtin_fn_t(
-	/** 
-         * The shell instance which invoked this call
-         */
-					       clish_context_t *context,
-	/** 
-         * A vector of textual command line arguments.
-         */
-					       const lub_argv_t * argv);
+	clish_context_t *context,
+	const lub_argv_t *argv,
+	const char *script,
+	char **out);
 
 /** 
  * A client of libclish may provide some builtin commands which will be
