@@ -28,7 +28,8 @@ static clish_shell_builtin_fn_t
     clish_history,
     clish_nested_up,
     clish_nop,
-    clish_wdog;
+    clish_wdog,
+    clish_macros;
 
 static clish_shell_builtin_t clish_cmd_list[] = {
 	{"clish_close", clish_close},
@@ -39,6 +40,7 @@ static clish_shell_builtin_t clish_cmd_list[] = {
 	{"clish_nested_up", clish_nested_up},
 	{"clish_nop", clish_nop},
 	{"clish_wdog", clish_wdog},
+	{"clish_macros", clish_macros},
 	{NULL, NULL}
 };
 
@@ -446,6 +448,19 @@ static int clish_wdog(clish_context_t *context, const lub_argv_t *argv,
 
 	this->wdog_timeout = (unsigned int)atoi(arg);
 
+	return 0;
+}
+
+/*--------------------------------------------------------- */
+/*
+ * Get the ACTION context as a macros
+ */
+static int clish_macros(clish_context_t *context, const lub_argv_t *argv,
+	const char *script, char **out)
+{
+	if (!script) /* Nothing to do */
+		return 0;
+	*out = lub_string_dup(script);
 	return 0;
 }
 
