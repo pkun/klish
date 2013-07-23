@@ -335,7 +335,18 @@ int clish_shell_execute(clish_context_t *context, char **out)
 
 	/* Move into the new view */
 	if (!result) {
-		clish_view_t *view = clish_command__get_view(cmd);
+		clish_view_t *view = NULL;
+		const char *view_str = clish_command__get_view(cmd);
+		if (view_str) {
+			char *view_exp = NULL;
+			view_exp = clish_shell_expand(view_str,
+				SHELL_VAR_NONE, context);
+			view = clish_shell_find_view(this, view_exp);
+			if (!view)
+				fprintf(stderr, "System error: Can't "
+					"change view to %s\n", view_exp);
+			lub_string_free(view_exp);
+		}
 		/* Save the PWD */
 		if (view) {
 			char *line = clish_shell__get_line(context);

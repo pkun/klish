@@ -59,6 +59,7 @@ static void clish_command_fini(clish_command_t * this)
 	clish_paramv_delete(this->paramv);
 
 	lub_string_free(this->alias);
+	lub_string_free(this->view);
 	lub_string_free(this->viewid);
 	clish_action_delete(this->action);
 	clish_config_delete(this->config);
@@ -250,39 +251,43 @@ clish_config_t *clish_command__get_config(const clish_command_t *this)
 }
 
 /*--------------------------------------------------------- */
-void clish_command__set_view(clish_command_t * this, clish_view_t * view)
+void clish_command__set_view(clish_command_t * this, const char *view)
 {
 	assert(NULL == this->view);
 	clish_command__force_view(this, view);
 }
 
 /*--------------------------------------------------------- */
-void clish_command__force_view(clish_command_t * this, clish_view_t * view)
+void clish_command__force_view(clish_command_t *this, const char *view)
 {
-	this->view = view;
+	if (this->view)
+		lub_string_free(this->view);
+	this->view = lub_string_dup(view);
 }
 
 /*--------------------------------------------------------- */
-clish_view_t *clish_command__get_view(const clish_command_t * this)
+const char *clish_command__get_view(const clish_command_t *this)
 {
 	return this->view;
 }
 
 /*--------------------------------------------------------- */
-void clish_command__set_viewid(clish_command_t * this, const char *viewid)
+void clish_command__set_viewid(clish_command_t *this, const char *viewid)
 {
 	assert(NULL == this->viewid);
 	clish_command__force_viewid(this, viewid);
 }
 
 /*--------------------------------------------------------- */
-void clish_command__force_viewid(clish_command_t * this, const char *viewid)
+void clish_command__force_viewid(clish_command_t *this, const char *viewid)
 {
+	if (this->viewid)
+		lub_string_free(this->viewid);
 	this->viewid = lub_string_dup(viewid);
 }
 
 /*--------------------------------------------------------- */
-char *clish_command__get_viewid(const clish_command_t * this)
+char *clish_command__get_viewid(const clish_command_t *this)
 {
 	return this->viewid;
 }
