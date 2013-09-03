@@ -38,8 +38,9 @@ void clish_shell__set_startup_view(clish_shell_t * this, const char * viewname)
 	assert(this);
 	assert(this->startup);
 	/* Search for the view */
-	view = clish_shell_find_create_view(this, viewname, NULL);
-	clish_command__force_view(this->startup, view);
+	view = clish_shell_find_view(this, viewname);
+	assert(view);
+	clish_command__force_view(this->startup, viewname);
 }
 
 /*----------------------------------------------------------- */
