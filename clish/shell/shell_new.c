@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <syslog.h>
 
 #include "lub/string.h"
 #include "lub/db.h"
@@ -59,6 +60,7 @@ static void clish_shell_init(clish_shell_t * this,
 	this->fifo_name = NULL;
 	this->interactive = BOOL_TRUE; /* The interactive shell by default. */
 	this->log = BOOL_FALSE; /* Disable logging by default */
+	this->log_facility = LOG_LOCAL0; /* LOCAL0 for compatibility */
 	this->user = lub_db_getpwuid(getuid()); /* Get user information */
 
 	/* Create internal ptypes and params */

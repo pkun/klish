@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <syslog.h>
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
 #endif
@@ -27,6 +28,7 @@
 
 #include "lub/list.h"
 #include "lub/system.h"
+#include "lub/log.h"
 #include "clish/shell.h"
 #include "clish/internal.h"
 
@@ -65,6 +67,7 @@ int main(int argc, char **argv)
 	bool_t utf8 = BOOL_FALSE;
 	bool_t bit8 = BOOL_FALSE;
 	bool_t log = BOOL_FALSE;
+	int log_facility = LOG_LOCAL0;
 	const char *xml_path = getenv("CLISH_PATH");
 	const char *view = getenv("CLISH_VIEW");
 	const char *viewid = getenv("CLISH_VIEWID");
@@ -82,7 +85,7 @@ int main(int argc, char **argv)
 	struct sigaction sigpipe_act;
 	sigset_t sigpipe_set;
 
-	static const char *shortopts = "hvs:ledx:w:i:bqu8okt:c:f:z:";
+	static const char *shortopts = "hvs:ledx:w:i:bqu8oO:kt:c:f:z:";
 #ifdef HAVE_GETOPT_H
 	static const struct option longopts[] = {
 		{"help",	0, NULL, 'h'},
@@ -99,6 +102,7 @@ int main(int argc, char **argv)
 		{"utf8",	0, NULL, 'u'},
 		{"8bit",	0, NULL, '8'},
 		{"log",		0, NULL, 'o'},
+		{"facility",	1, NULL, 'O'},
 		{"check",	0, NULL, 'k'},
 		{"timeout",	1, NULL, 't'},
 		{"command",	1, NULL, 'c'},
@@ -158,6 +162,13 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			log = BOOL_TRUE;
+			break;
+		case 'O':
+			if (lub_log_facility(optarg, &log_facility)) {
+				fprintf(stderr, "Error: Illegal syslog facility %s.\n", optarg);
+				help(-1, argv[0]);
+				goto end;
+			}
 			break;
 		case 'd':
 			my_hooks.script_fn = clish_dryrun_callback;
@@ -264,8 +275,10 @@ int main(int argc, char **argv)
 #endif
 	}
 	/* Set logging */
-	if (log)
+	if (log) {
 		clish_shell__set_log(shell, log);
+		clish_shell__set_facility(shell, log_facility);
+	}
 	/* Set idle timeout */
 	if (istimeout)
 		clish_shell__set_timeout(shell, timeout);
@@ -370,7 +383,8 @@ static void help(int status, const char *argv0)
 		printf("\t-i <vars>, --viewid=<vars>\tSet the startup viewid variables.\n");
 		printf("\t-u, --utf8\tForce UTF-8 encoding.\n");
 		printf("\t-8, --8bit\tForce 8-bit encoding.\n");
-		printf("\t-o, --log\tEnable command logging to syslog's local0.\n");
+		printf("\t-o, --log\tEnable command logging to syslog's.\n");
+		printf("\t-O, --facility\tSyslog facility.\n");
 		printf("\t-k, --check\tCheck input files for syntax errors only.\n");
 		printf("\t-t <timeout>, --timeout=<timeout>\tIdle timeout in seconds.\n");
 		printf("\t-c <command>, --command=<command>\tExecute specified command(s).\n\t\tMultiple options are possible.\n");

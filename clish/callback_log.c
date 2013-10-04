@@ -12,7 +12,6 @@
 #include "internal.h"
 
 #define SYSLOG_IDENT "klish"
-#define SYSLOG_FACILITY LOG_LOCAL0
 
 /*--------------------------------------------------------- */
 int clish_log_callback(clish_context_t *context, const char *line,
@@ -24,7 +23,8 @@ int clish_log_callback(clish_context_t *context, const char *line,
 
 	/* Initialization */
 	if (!line) {
-		openlog(SYSLOG_IDENT, LOG_PID, SYSLOG_FACILITY);
+		openlog(SYSLOG_IDENT, LOG_PID,
+			clish_shell__get_facility(this));
 		return 0;
 	}
 
