@@ -68,8 +68,12 @@ static int clish_source_internal(clish_context_t *context,
 	const lub_argv_t * argv, bool_t stop_on_error)
 {
 	int result = -1;
-	const char *filename = lub_argv__get_arg(argv, 0);
+	const char *filename = NULL;
 	struct stat fileStat;
+
+	if (!argv) /* Empty arguments */
+		return -1;
+	filename = lub_argv__get_arg(argv, 0);
 
 	/* the exception proves the rule... */
 	clish_shell_t *this = (clish_shell_t *)context->shell;
@@ -139,8 +143,11 @@ static int clish_history(clish_context_t *context, const lub_argv_t *argv,
 	tinyrl_history_iterator_t iter;
 	const tinyrl_history_entry_t *entry;
 	unsigned limit = 0;
-	const char *arg = lub_argv__get_arg(argv, 0);
+	const char *arg = NULL;
 
+	/* Get history limit */
+	if (argv)
+		arg = lub_argv__get_arg(argv, 0);
 	if (arg && ('\0' != *arg)) {
 		limit = (unsigned)atoi(arg);
 		if (0 == limit) {
