@@ -65,10 +65,6 @@ struct clish_shell_s {
 	bool_t log; /* If command logging is enabled */
 	int log_facility; /* Syslog facility */
 	struct passwd *user; /* Current user information */
-
-	/* Static params for var expanding. The refactoring is needed. */
-	clish_param_t *param_depth;
-	clish_param_t *param_pwd;
 };
 
 /**
