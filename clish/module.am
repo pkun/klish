@@ -8,7 +8,7 @@ libclish_la_SOURCES = \
     clish/callback_log.c \
     clish/private.h
 
-libclish_la_LDFLAGS = @XML_LDFLAGS@
+libclish_la_LDFLAGS = $(VERSION_INFO) @XML_LDFLAGS@
 libclish_la_CFLAGS = @XML_CFLAGS@ $(DEBUG_CFLAGS)
 libclish_la_LIBADD = \
 	liblub.la \
