@@ -19,6 +19,7 @@
 /config.h.in
 /aclocal.m4
 /Makefile.in
+/*.patch
 
 # Debian files
 /build-stamp
