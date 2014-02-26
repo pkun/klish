@@ -300,7 +300,7 @@ static void process_overview(clish_shell_t *shell, clish_xmlnode_t *element,
 		if (!new) {
 			if (content)
 				free(content);
-			return -1;
+			return;
 		}
 		content = new;
 		result = clish_xmlnode_get_content(element, content,

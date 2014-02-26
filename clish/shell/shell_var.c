@@ -51,6 +51,9 @@ static char *find_context_var(const char *name, clish_context_t *this)
 	char *result = NULL;
 	clish_shell_t *shell = this->shell;
 
+	if (!shell || !shell->tinyrl)
+		return NULL;
+
 	if (!lub_string_nocasecmp(name, "_width")) {
 		char tmp[5];
 		snprintf(tmp, sizeof(tmp), "%u",
