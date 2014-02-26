@@ -68,6 +68,8 @@ bool_t clish_access_callback(const clish_shell_t * shell, const char *access)
 	lub_string_free(full_access);
 	free(group_list);
 #endif
+	shell = shell; /* Happy compiler */
+
 	return allowed;
 }
 

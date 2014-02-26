@@ -166,6 +166,10 @@ int clish_dryrun_callback(clish_context_t *context,
 	if (out)
 		*out = NULL;
 
+	context = context; /* Happy compiler */
+	action = action; /* Happy compiler */
+	script = script; /* Happy compiler */
+
 	return 0;
 }
 

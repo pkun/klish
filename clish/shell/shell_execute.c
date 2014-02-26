@@ -55,6 +55,9 @@ static int clish_close(clish_context_t *context, const lub_argv_t *argv,
 	argv = argv; /* not used */
 	this->state = SHELL_STATE_CLOSING;
 
+	script = script; /* Happy compiler */
+	out = out; /* Happy compiler */
+
 	return 0;
 }
 
@@ -104,6 +107,9 @@ static int clish_source_internal(clish_context_t *context,
 static int clish_source(clish_context_t *context, const lub_argv_t *argv,
 	const char *script, char **out)
 {
+	script = script; /* Happy compiler */
+	out = out; /* Happy compiler */
+
 	return (clish_source_internal(context, argv, BOOL_TRUE));
 }
 
@@ -116,6 +122,9 @@ static int clish_source(clish_context_t *context, const lub_argv_t *argv,
 static int clish_source_nostop(clish_context_t *context, const lub_argv_t *argv,
 	const char *script, char **out)
 {
+	script = script; /* Happy compiler */
+	out = out; /* Happy compiler */
+
 	return (clish_source_internal(context, argv, BOOL_FALSE));
 }
 
@@ -130,6 +139,9 @@ static int clish_overview(clish_context_t *context, const lub_argv_t *argv,
 	argv = argv; /* not used */
 
 	tinyrl_printf(this->tinyrl, "%s\n", context->shell->overview);
+
+	script = script; /* Happy compiler */
+	out = out; /* Happy compiler */
 
 	return 0;
 }
@@ -166,6 +178,10 @@ static int clish_history(clish_context_t *context, const lub_argv_t *argv,
 			tinyrl_history_entry__get_index(entry),
 			tinyrl_history_entry__get_line(entry));
 	}
+
+	script = script; /* Happy compiler */
+	out = out; /* Happy compiler */
+
 	return 0;
 }
 
@@ -435,6 +451,9 @@ static int clish_nested_up(clish_context_t *context, const lub_argv_t *argv,
 	}
 	this->depth--;
 
+	script = script; /* Happy compiler */
+	out = out; /* Happy compiler */
+
 	return 0;
 }
 
@@ -445,6 +464,11 @@ static int clish_nested_up(clish_context_t *context, const lub_argv_t *argv,
 static int clish_nop(clish_context_t *context, const lub_argv_t *argv,
 	const char *script, char **out)
 {
+	context = context; /* Happy compiler */
+	argv = argv; /* Happy compiler */
+	script = script; /* Happy compiler */
+	out = out; /* Happy compiler */
+
 	return 0;
 }
 
@@ -466,6 +490,9 @@ static int clish_wdog(clish_context_t *context, const lub_argv_t *argv,
 
 	this->wdog_timeout = (unsigned int)atoi(arg);
 
+	script = script; /* Happy compiler */
+	out = out; /* Happy compiler */
+
 	return 0;
 }
 
@@ -479,6 +506,10 @@ static int clish_macros(clish_context_t *context, const lub_argv_t *argv,
 	if (!script) /* Nothing to do */
 		return 0;
 	*out = lub_string_dup(script);
+
+	context = context; /* Happy compiler */
+	argv = argv; /* Happy compiler */
+
 	return 0;
 }
 

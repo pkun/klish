@@ -191,6 +191,8 @@ process_clish_module(clish_shell_t * shell, clish_xmlnode_t * element, void *par
 		shell->global = clish_shell_find_create_view(shell,
 			"global", "");
 	process_children(shell, element, shell->global);
+
+	parent = parent; /* Happy compiler */
 }
 
 /* ------------------------------------------------------ */
@@ -241,6 +243,8 @@ process_view_end:
 	clish_xml_release(depth);
 	clish_xml_release(restore);
 	clish_xml_release(access);
+
+	parent = parent; /* Happy compiler */
 }
 
 /* ------------------------------------------------------ */
@@ -272,11 +276,13 @@ static void process_ptype(clish_shell_t * shell, clish_xmlnode_t * element, void
 	clish_xml_release(pattern);
 	clish_xml_release(method_name);
 	clish_xml_release(preprocess_name);
+
+	parent = parent; /* Happy compiler */
 }
 
 /* ------------------------------------------------------ */
-static void
-process_overview(clish_shell_t * shell, clish_xmlnode_t * element, void *parent)
+static void process_overview(clish_shell_t *shell, clish_xmlnode_t *element,
+	void *parent)
 {
 	char *content = NULL;
 	unsigned int content_len = 2048;
@@ -304,6 +310,8 @@ process_overview(clish_shell_t * shell, clish_xmlnode_t * element, void *parent)
 
 	if (content)
 		free(content);
+
+	parent = parent; /* Happy compiler */
 }
 
 /* ------------------------------------------------------ */
@@ -669,8 +677,8 @@ process_param(clish_shell_t * shell, clish_xmlnode_t * element, void *parent)
 }
 
 /* ------------------------------------------------------ */
-static void
-process_action(clish_shell_t * shell, clish_xmlnode_t * element, void *parent)
+static void process_action(clish_shell_t *shell, clish_xmlnode_t *element,
+	void *parent)
 {
 	clish_action_t *action = NULL;
 	char *builtin = clish_xmlnode_fetch_attr(element, "builtin");
@@ -704,11 +712,13 @@ process_action(clish_shell_t * shell, clish_xmlnode_t * element, void *parent)
 
 	clish_xml_release(builtin);
 	clish_xml_release(shebang);
+
+	shell = shell; /* Happy compiler */
 }
 
 /* ------------------------------------------------------ */
-static void
-process_detail(clish_shell_t * shell, clish_xmlnode_t * element, void *parent)
+static void process_detail(clish_shell_t *shell, clish_xmlnode_t *element,
+	void *parent)
 {
 	clish_command_t *cmd = (clish_command_t *) parent;
 
@@ -722,6 +732,8 @@ process_detail(clish_shell_t * shell, clish_xmlnode_t * element, void *parent)
 
 	if (text)
 		free(text);
+
+	shell = shell; /* Happy compiler */
 }
 
 /* ------------------------------------------------------ */
@@ -807,8 +819,8 @@ process_namespace_end:
 }
 
 /* ------------------------------------------------------ */
-static void
-process_config(clish_shell_t * shell, clish_xmlnode_t * element, void *parent)
+static void process_config(clish_shell_t *shell, clish_xmlnode_t *element,
+	void *parent)
 {
 	clish_command_t *cmd = (clish_command_t *)parent;
 	clish_config_t *config;
@@ -891,10 +903,13 @@ process_config(clish_shell_t * shell, clish_xmlnode_t * element, void *parent)
 	clish_xml_release(seq);
 	clish_xml_release(unique);
 	clish_xml_release(depth);
+
+	shell = shell; /* Happy compiler */
 }
 
 /* ------------------------------------------------------ */
-static void process_var(clish_shell_t * shell, clish_xmlnode_t * element, void *parent)
+static void process_var(clish_shell_t *shell, clish_xmlnode_t *element,
+	void *parent)
 {
 	clish_var_t *var = NULL;
 	char *name = clish_xmlnode_fetch_attr(element, "name");
@@ -925,6 +940,8 @@ static void process_var(clish_shell_t * shell, clish_xmlnode_t * element, void *
 	clish_xml_release(value);
 
 	process_children(shell, element, var);
+
+	parent = parent; /* Happy compiler */
 }
 
 /* ------------------------------------------------------ */
@@ -962,6 +979,8 @@ process_hotkey(clish_shell_t *shell, clish_xmlnode_t* element, void *parent)
 
 	clish_xml_release(key);
 	clish_xml_release(cmd);
+
+	shell = shell; /* Happy compiler */
 }
 
 /* ------------------------------------------------------ */
