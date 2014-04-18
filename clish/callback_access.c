@@ -34,7 +34,7 @@ bool_t clish_access_callback(const clish_shell_t * shell, const char *access)
 	gid_t *group_list;
 	int i;
 	char *tmp_access, *full_access;
-	char *saveptr;
+	char *saveptr = NULL;
 
 	assert(access);
 	full_access = lub_string_dup(access);
