@@ -244,8 +244,11 @@ int main(int argc, char **argv)
 	}
 
 	/* Create shell instance */
-	if (quiet)
-		outfd = fopen("/dev/null", "w");
+	if (quiet) {
+		FILE *tmpfd = NULL;
+		if ((tmpfd = fopen("/dev/null", "w")))
+			outfd = tmpfd;
+	}
 	shell = clish_shell_new(&my_hooks, NULL, NULL, outfd, stop_on_error);
 	if (!shell) {
 		fprintf(stderr, "Can't run clish.\n");
@@ -337,7 +340,7 @@ end:
 		}
 		clish_shell_delete(shell);
 	}
-	if (quiet)
+	if (quiet && (outfd != stdout))
 		fclose(outfd);
 
 	/* Delete each cmds element */
