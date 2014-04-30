@@ -30,9 +30,12 @@
 /debian/klish-dev
 /debian/files
 
+# Binaries
 /bin/clish
 /bin/konf
 /bin/konfd
 /bin/sigexec
 
 /klish-*.tar*
+/*.tgz
+/cov-int
