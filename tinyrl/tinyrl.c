@@ -178,7 +178,7 @@ static void utf8_point_right(tinyrl_t * this)
 }
 
 /*-------------------------------------------------------- */
-static unsigned utf8_nsyms(const tinyrl_t *this, const char *str,
+static unsigned int utf8_nsyms(const tinyrl_t *this, const char *str,
 	unsigned int num)
 {
 	unsigned int nsym = 0;
@@ -438,7 +438,7 @@ static bool_t tinyrl_key_backspace(tinyrl_t *this, int key)
 {
 	bool_t result = BOOL_FALSE;
 	if (this->point) {
-		unsigned end = --this->point;
+		unsigned int end = --this->point;
 		utf8_point_left(this);
 		tinyrl_delete_text(this, this->point, end);
 		result = BOOL_TRUE;
@@ -473,7 +473,7 @@ static bool_t tinyrl_key_delete(tinyrl_t * this, int key)
 {
 	bool_t result = BOOL_FALSE;
 	if (this->point < this->end) {
-		unsigned begin = this->point++;
+		unsigned int begin = this->point++;
 		utf8_point_right(this);
 		tinyrl_delete_text(this, begin, this->point - 1);
 		result = BOOL_TRUE;
@@ -606,7 +606,7 @@ static void tinyrl_fini(tinyrl_t * this)
 
 /*-------------------------------------------------------- */
 static void tinyrl_init(tinyrl_t * this, FILE * istream, FILE * ostream,
-	unsigned stifle, tinyrl_completion_func_t * complete_fn)
+	unsigned int stifle, tinyrl_completion_func_t * complete_fn)
 {
 	int i;
 
@@ -707,7 +707,7 @@ static void tinyrl_internal_print(const tinyrl_t * this, const char *text)
 	} else {
 		/* replace the line with echo char if defined */
 		if (this->echo_char) {
-			unsigned i = strlen(text);
+			unsigned int i = strlen(text);
 			while (i--) {
 				tinyrl_vt100_printf(this->term, "%c",
 					this->echo_char);
@@ -806,7 +806,7 @@ void tinyrl_redisplay(tinyrl_t * this)
 
 /*----------------------------------------------------------------------- */
 tinyrl_t *tinyrl_new(FILE * istream, FILE * ostream,
-	unsigned stifle, tinyrl_completion_func_t * complete_fn)
+	unsigned int stifle, tinyrl_completion_func_t * complete_fn)
 {
 	tinyrl_t *this = NULL;
 
@@ -1026,7 +1026,7 @@ char *tinyrl_forceline(tinyrl_t * this, void *context, const char *line)
  * possibly reallocating it if necessary. The function returns BOOL_TRUE
  * if the line is successfully extended, BOOL_FALSE if not.
  */
-bool_t tinyrl_extend_line_buffer(tinyrl_t * this, unsigned len)
+bool_t tinyrl_extend_line_buffer(tinyrl_t * this, unsigned int len)
 {
 	bool_t result = BOOL_TRUE;
 	char *new_buffer;
@@ -1083,7 +1083,7 @@ bool_t tinyrl_extend_line_buffer(tinyrl_t * this, unsigned len)
  */
 bool_t tinyrl_insert_text(tinyrl_t * this, const char *text)
 {
-	unsigned delta = strlen(text);
+	unsigned int delta = strlen(text);
 
 	/*
 	 * If the client wants to change the line ensure that the line and buffer
@@ -1166,9 +1166,9 @@ void tinyrl_display_matches(const tinyrl_t *this,
  * Delete the text between start and end in the current line. (inclusive)
  * This adjusts the rl_point and rl_end indexes appropriately.
  */
-void tinyrl_delete_text(tinyrl_t * this, unsigned start, unsigned end)
+void tinyrl_delete_text(tinyrl_t * this, unsigned int start, unsigned int end)
 {
-	unsigned delta;
+	unsigned int delta;
 
 	/*
 	 * If the client wants to change the line ensure that the line and buffer
@@ -1178,7 +1178,7 @@ void tinyrl_delete_text(tinyrl_t * this, unsigned start, unsigned end)
 
 	/* make sure we play it safe */
 	if (start > end) {
-		unsigned tmp = end;
+		unsigned int tmp = end;
 		start = end;
 		end = tmp;
 	}
@@ -1237,12 +1237,12 @@ bool_t tinyrl_bind_key(tinyrl_t * this, int key, tinyrl_key_func_t * fn)
  * more matches. 
  */
 char **tinyrl_completion(tinyrl_t * this,
-	const char *line, unsigned start, unsigned end,
+	const char *line, unsigned int start, unsigned int end,
 	tinyrl_compentry_func_t * entry_func)
 {
-	unsigned state = 0;
+	unsigned int state = 0;
 	size_t size = 1;
-	unsigned offset = 1;	/* need at least one entry for the substitution */
+	unsigned int offset = 1; /* Need at least one entry for the substitution */
 	char **matches = NULL;
 	char *match;
 	/* duplicate the string upto the insertion point */
@@ -1317,11 +1317,9 @@ void tinyrl_ding(const tinyrl_t * this)
 /*-------------------------------------------------------- */
 void tinyrl_reset_line_state(tinyrl_t * this)
 {
-	/* start from scratch */
 	lub_string_free(this->last_buffer);
 	this->last_buffer = NULL;
 	this->last_line_size = 0;
-/*	this->last_point = 0; */
 
 	tinyrl_redisplay(this);
 }
@@ -1352,7 +1350,7 @@ tinyrl_do_complete(tinyrl_t * this, bool_t with_extensions)
 {
 	tinyrl_match_e result = TINYRL_NO_MATCH;
 	char **matches = NULL;
-	unsigned start, end;
+	unsigned int start, end;
 	bool_t completion = BOOL_FALSE;
 	bool_t prefix = BOOL_FALSE;
 	int i = 0;
@@ -1397,7 +1395,7 @@ tinyrl_do_complete(tinyrl_t * this, bool_t with_extensions)
 	/* is there more than one completion? */
 	if (matches[2]) {
 		char **tmp = matches;
-		unsigned max, len;
+		unsigned int max, len;
 		max = len = 0;
 		while (*tmp) {
 			size_t size = strlen(*tmp++);
@@ -1597,7 +1595,7 @@ bool_t tinyrl_is_quoting(const tinyrl_t * this)
 {
 	bool_t result = BOOL_FALSE;
 	/* count the quotes upto the current insertion point */
-	unsigned i = 0;
+	unsigned int i = 0;
 	while (i < this->point) {
 		if (result && (this->line[i] == '\\')) {
 			i++;
@@ -1620,19 +1618,19 @@ bool_t tinyrl_is_empty(const tinyrl_t *this)
 }
 
 /*--------------------------------------------------------- */
-void tinyrl_limit_line_length(tinyrl_t * this, unsigned length)
+void tinyrl_limit_line_length(tinyrl_t * this, unsigned int length)
 {
 	this->max_line_length = length;
 }
 
 /*--------------------------------------------------------- */
-extern unsigned tinyrl__get_width(const tinyrl_t *this)
+extern unsigned int tinyrl__get_width(const tinyrl_t *this)
 {
 	return tinyrl_vt100__get_width(this->term);
 }
 
 /*--------------------------------------------------------- */
-extern unsigned tinyrl__get_height(const tinyrl_t *this)
+extern unsigned int tinyrl__get_height(const tinyrl_t *this)
 {
 	return tinyrl_vt100__get_height(this->term);
 }
