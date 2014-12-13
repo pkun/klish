@@ -77,15 +77,6 @@ static void clish_shell_init(clish_shell_t * this,
 	this->user = lub_db_getpwuid(getuid()); /* Get user information */
 	this->default_plugin = BOOL_TRUE; /* Load default plugin by default */
 
-	/* Create internal ptypes and params */
-	/* Args */
-	tmp_ptype = clish_shell_find_create_ptype(this,
-		"__ptype_ARGS",
-		"Arguments", "[^\\\\]+",
-		CLISH_PTYPE_REGEXP,
-		CLISH_PTYPE_NONE);
-	assert(tmp_ptype);
-
 	/* Push non-NULL istream */
 	if (istream)
 		clish_shell_push_fd(this, istream, stop_on_error);
