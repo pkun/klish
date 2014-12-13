@@ -81,6 +81,13 @@ int clish_shell_load_scheme(clish_shell_t *this, const char *xml_path)
 	char *saveptr = NULL;
 	int res = 0;
 
+	/* Precreate internal PTYPEs */
+	clish_shell_find_create_ptype(this,
+		"__ptype_ARGS",
+		"Arguments", "[^\\\\]+",
+		CLISH_PTYPE_REGEXP,
+		CLISH_PTYPE_NONE);
+
 	/* use the default path */
 	if (!path)
 		path = default_path;
