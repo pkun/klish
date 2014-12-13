@@ -10,7 +10,7 @@
 const char* clish_plugin_default_hook[] = {
 	NULL,
 	"clish_script@clish",
-	NULL,
+	NULL, /* Access */
 	"clish_hook_config@clish",
 	"clish_hook_log@clish"
 };
