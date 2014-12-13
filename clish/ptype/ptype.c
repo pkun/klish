@@ -482,9 +482,11 @@ clish_ptype__set_pattern(clish_ptype_t * this,
 		int result;
 
 		/* only the expression is allowed */
-		lub_string_cat(&this->pattern, "^");
+		if (pattern[0] != '^')
+			lub_string_cat(&this->pattern, "^");
 		lub_string_cat(&this->pattern, pattern);
-		lub_string_cat(&this->pattern, "$");
+		if (pattern[strlen(this->pattern) - 1] != '$')
+			lub_string_cat(&this->pattern, "$");
 
 		/* compile the regular expression for later use */
 		result = regcomp(&this->u.regexp, this->pattern,

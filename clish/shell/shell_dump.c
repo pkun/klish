@@ -92,6 +92,9 @@ void clish_shell_xml2c(clish_shell_t *this)
 	}
 #endif
 
-	printf("\n}\n");
+	printf("\n"
+		"return 0;\n"
+		"}\n"
+		);
 }
 
