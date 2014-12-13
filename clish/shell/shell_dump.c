@@ -56,6 +56,16 @@ void clish_shell_xml2c(clish_shell_t *this)
 	clish_var_t *var;
 	lub_bintree_iterator_t iter;
 
+	printf("#include \"private.h\"\n"
+		"#include \"lub/string.h\"\n"
+		"#include <stdlib.h>\n"
+		"#include <string.h>\n"
+		"#include <assert.h>\n"
+		"#include <errno.h>\n"
+		"#include <sys/types.h>\n"
+		"\n"
+		);
+
 	printf("int clish_shell_load_scheme(clish_shell_t *shell, const char *xml_path)\n"
 		"{\n\n");
 
