@@ -4,7 +4,11 @@ bin_PROGRAMS += \
 	bin/konfd \
 	bin/konf \
 	bin/sigexec \
+<<<<<<< HEAD
 	bin/ktool
+=======
+	bin/xml2c
+>>>>>>> Add xml2c
 
 bin_clish_SOURCES = bin/clish.c
 bin_clish_LDADD = \
