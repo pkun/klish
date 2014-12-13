@@ -97,4 +97,3 @@ void clish_shell_xml2c(clish_shell_t *this)
 		"}\n"
 		);
 }
-
