@@ -1,0 +1,2 @@
+liblub_la_SOURCES +=	lub/xml2c/xml2c.c \
+			lub/xml2c/private.h
