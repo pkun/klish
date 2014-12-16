@@ -40,7 +40,7 @@
 /bin/konf
 /bin/konfd
 /bin/sigexec
-/bin/xml2c
+/bin/ktool
 
 # Docs
 /doc/*.html
