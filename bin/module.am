@@ -4,7 +4,7 @@ bin_PROGRAMS += \
 	bin/konfd \
 	bin/konf \
 	bin/sigexec \
-	bin/xml2c
+	bin/ktool
 
 bin_clish_SOURCES = bin/clish.c
 bin_clish_LDADD = \
@@ -31,8 +31,8 @@ bin_sigexec_SOURCES = bin/sigexec.c
 bin_sigexec_LDADD = \
 	$(LIBOBJS)
 
-bin_xml2c_SOURCES = bin/xml2c.c
-bin_xml2c_LDADD = \
+bin_ktool_SOURCES = bin/ktool.c
+bin_ktool_LDADD = \
 	libclish.la \
 	libkonf.la \
 	libtinyrl.la \
