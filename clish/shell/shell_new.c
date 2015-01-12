@@ -18,7 +18,6 @@
 static void clish_shell_init(clish_shell_t * this,
 	FILE * istream, FILE * ostream, bool_t stop_on_error)
 {
-	clish_ptype_t *tmp_ptype = NULL;
 	int i;
 
 	/* initialise the tree of views */

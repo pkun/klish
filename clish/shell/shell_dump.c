@@ -51,9 +51,9 @@ void clish_shell_dump(clish_shell_t * this)
 /*--------------------------------------------------------- */
 void clish_shell_xml2c(clish_shell_t *this)
 {
-	clish_view_t *v;
+//	clish_view_t *v;
 	clish_ptype_t *t;
-	clish_var_t *var;
+//	clish_var_t *var;
 	lub_bintree_iterator_t iter;
 
 	printf("#include \"private.h\"\n"
