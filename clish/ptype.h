@@ -116,7 +116,8 @@ char *clish_ptype_translate(const clish_ptype_t * instance, const char *text);
  */
 void clish_ptype_word_generator(clish_ptype_t * instance,
 	lub_argv_t *matches, const char *text);
-void clish_ptype_dump(clish_ptype_t * instance);
+void clish_ptype_dump(clish_ptype_t *instance);
+void clish_ptype_xml2c(clish_ptype_t *instance);
 /*-----------------
  * attributes
  *----------------- */
