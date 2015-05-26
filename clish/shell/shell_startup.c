@@ -243,7 +243,6 @@ int clish_shell_prepare(clish_shell_t *this)
 				continue;
 			}
 			clish_nspace__set_view(nspace, ref_view);
-			clish_nspace__set_view_name(nspace, NULL); /* Free some memory */
 			/* Check access rights for the NAMESPACE */
 			if (access_fn && (
 				/* Check NAMESPASE owned access */
