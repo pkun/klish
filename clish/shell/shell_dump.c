@@ -71,6 +71,7 @@ void clish_shell_xml2c(clish_shell_t *this)
 
 	/* Declare vars */
 	printf("clish_var_t *var;\n");
+	printf("clish_action_t *action;\n");
 	printf("\n");
 
 	/* Iterate the tree of types */
