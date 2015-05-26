@@ -22,6 +22,7 @@ clish_var_t *clish_var_new(const char *name);
  *----------------- */
 void clish_var_delete(clish_var_t *instance);
 void clish_var_dump(const clish_var_t *instance);
+void clish_var_xml2c(clish_var_t *instance);
 /*-----------------
  * attributes
  *----------------- */

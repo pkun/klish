@@ -53,7 +53,7 @@ void clish_shell_xml2c(clish_shell_t *this)
 {
 //	clish_view_t *v;
 	clish_ptype_t *t;
-//	clish_var_t *var;
+	clish_var_t *var;
 	lub_bintree_iterator_t iter;
 
 	printf("#include \"private.h\"\n"
@@ -69,6 +69,10 @@ void clish_shell_xml2c(clish_shell_t *this)
 	printf("int clish_shell_load_scheme(clish_shell_t *shell, const char *xml_path)\n"
 		"{\n\n");
 
+	/* Declare vars */
+	printf("clish_var_t *var;\n");
+	printf("\n");
+
 	/* Iterate the tree of types */
 	printf("/*########## PTYPE ##########*/\n\n");
 	t = lub_bintree_findfirst(&this->ptype_tree);
@@ -76,6 +80,15 @@ void clish_shell_xml2c(clish_shell_t *this)
 		t; t = lub_bintree_iterator_next(&iter)) {
 		clish_ptype_xml2c(t);
 	}
+
+	/* Iterate the tree of vars */
+	printf("/*########## VAR ##########*/\n\n");
+	var = lub_bintree_findfirst(&this->var_tree);
+	for (lub_bintree_iterator_init(&iter, &this->var_tree, var);
+		var; var = lub_bintree_iterator_next(&iter)) {
+		clish_var_xml2c(var);
+	}
+
 #if 0
 	v = lub_bintree_findfirst(&this->view_tree);
 	/* iterate the tree of views */
@@ -84,12 +97,6 @@ void clish_shell_xml2c(clish_shell_t *this)
 		clish_view_dump(v);
 	}
 
-	/* iterate the tree of vars */
-	var = lub_bintree_findfirst(&this->var_tree);
-	for (lub_bintree_iterator_init(&iter, &this->var_tree, var);
-		var; var = lub_bintree_iterator_next(&iter)) {
-		clish_var_dump(var);
-	}
 #endif
 
 	printf("\n"
