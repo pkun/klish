@@ -464,7 +464,6 @@ static int process_command(clish_shell_t *shell, clish_xmlnode_t *element,
 {
 	clish_view_t *v = (clish_view_t *) parent;
 	clish_command_t *cmd = NULL;
-	clish_command_t *old;
 	int res = -1;
 
 	char *access = clish_xmlnode_fetch_attr(element, "access");
@@ -492,16 +491,12 @@ static int process_command(clish_shell_t *shell, clish_xmlnode_t *element,
 		goto error;
 	}
 
-	/* check this command doesn't already exist */
-	old = clish_view_find_command(v, name, BOOL_FALSE);
-	if (old) {
+	/* Create a command with unique name */
+	cmd = clish_view_new_command(v, name, help);
+	if (!cmd) {
 		fprintf(stderr, CLISH_XML_ERROR_STR"Duplicate COMMAND name=\"%s\".\n", name);
 		goto error;
 	}
-
-	/* create a command */
-	cmd = clish_view_new_command(v, name, help);
-	clish_command__set_pview(cmd, v);
 
 	/* Reference 'ref' field */
 	if (ref) {
@@ -597,7 +592,6 @@ error:
 static int process_startup(clish_shell_t *shell, clish_xmlnode_t *element,
 	void *parent)
 {
-	clish_view_t *v = (clish_view_t *) parent;
 	clish_command_t *cmd = NULL;
 	int res = -1;
 
@@ -626,7 +620,7 @@ static int process_startup(clish_shell_t *shell, clish_xmlnode_t *element,
 	}
 
 	/* create a command with NULL help */
-	cmd = clish_view_new_command(v, "startup", NULL);
+	cmd = clish_command_new("startup", NULL);
 	clish_command__set_internal(cmd, BOOL_TRUE);
 
 	/* reference the next view */
@@ -1156,7 +1150,6 @@ error:
 static int process_wdog(clish_shell_t *shell,
 	clish_xmlnode_t *element, void *parent)
 {
-	clish_view_t *v = (clish_view_t *)parent;
 	clish_command_t *cmd = NULL;
 	int res = -1;
 
@@ -1166,8 +1159,8 @@ static int process_wdog(clish_shell_t *shell,
 		goto error;
 	}
 
-	/* Create a command with NULL help */
-	cmd = clish_view_new_command(v, "watchdog", NULL);
+	/* Create a command for WDOG */
+	cmd = clish_command_new("watchdog", NULL);
 #ifdef LEGACY
 	// Legacy watchdog has lockless ACTION
 	clish_action__set_lock(clish_command__get_action(cmd), BOOL_FALSE);

@@ -25,19 +25,19 @@ int clish_view_compare(const void *first, const void *second)
 /*-------------------------------------------------------- */
 static void clish_view_init(clish_view_t * this, const char *name)
 {
-	/* set up defaults */
 	this->name = lub_string_dup(name);
 	this->prompt = NULL;
 	this->depth = 0;
 	this->restore = CLISH_RESTORE_NONE;
 	this->access = NULL;
 
-	/* initialise the tree of commands for this view */
-	lub_bintree_init(&this->tree,
-		clish_command_bt_offset(),
-		clish_command_bt_compare, clish_command_bt_getkey);
+	/* Init COMMAND list */
+	this->cmds = lub_list_new(clish_command_compare, clish_command_delete);
 
-	/* Initialise the list of namespaces.
+	/* Init VAR list */
+	this->vars = lub_list_new(clish_command_compare, clish_command_delete);
+
+	/* Initialise the list of NAMESPACEs.
 	 * It's important to add new items to the
 	 * tail of list.
 	 */
@@ -50,23 +50,18 @@ static void clish_view_init(clish_view_t * this, const char *name)
 /*--------------------------------------------------------- */
 static void clish_view_fini(clish_view_t * this)
 {
-	clish_command_t *cmd;
+	/* Free COMMAND list */
+	lub_list_free_all(this->cmds);
 
-	/* delete each command held by this view */
-	while ((cmd = lub_bintree_findfirst(&this->tree))) {
-		/* remove the command from the tree */
-		lub_bintree_remove(&this->tree, cmd);
-		/* release the instance */
-		clish_command_delete(cmd);
-	}
+	/* Free VAR list */
+	lub_list_free_all(this->vars);
 
-	/* Free namespaces list */
+	/* Free NAMESPACE list */
 	lub_list_free_all(this->nspaces);
 
 	/* Free hotkey structures */
 	clish_hotkeyv_delete(this->hotkeys);
 
-	/* free our memory */
 	lub_string_free(this->name);
 	lub_string_free(this->prompt);
 	lub_string_free(this->access);
@@ -91,21 +86,16 @@ void clish_view_delete(void *data)
 }
 
 /*--------------------------------------------------------- */
-clish_command_t *clish_view_new_command(clish_view_t * this,
+/* Create new command and add it to list of commands */
+clish_command_t *clish_view_new_command(clish_view_t *this,
 	const char *name, const char *help)
 {
-	/* allocate the memory for a new parameter definition */
 	clish_command_t *cmd = clish_command_new(name, help);
 	assert(cmd);
-
-	/* if this is a command other than the startup command... */
-	if (NULL != help) {
-		/* ...insert it into the binary tree for this view */
-		if (-1 == lub_bintree_insert(&this->tree, cmd)) {
-			/* inserting a duplicate command is bad */
-			clish_command_delete(cmd);
-			cmd = NULL;
-		}
+	clish_command__set_pview(cmd, this);
+	if (!lub_list_add_uniq(this->cmds, cmd)) {
+		clish_command_delete(cmd);
+		cmd = NULL;
 	}
 	return cmd;
 }
@@ -119,13 +109,13 @@ clish_command_t *clish_view_new_command(clish_view_t * this,
  * this - the view instance upon which to operate
  * line - the command line to analyse 
  */
-clish_command_t *clish_view_resolve_prefix(clish_view_t * this,
+clish_command_t *clish_view_resolve_prefix(clish_view_t *this,
 	const char *line, bool_t inherit)
 {
 	clish_command_t *result = NULL, *cmd;
 	char *buffer = NULL;
 	lub_argv_t *argv;
-	unsigned i;
+	unsigned int i;
 
 	/* create a vector of arguments */
 	argv = lub_argv_new(line, 0);
@@ -178,13 +168,20 @@ clish_command_t *clish_view_resolve_command(clish_view_t *this,
 }
 
 /*--------------------------------------------------------- */
-clish_command_t *clish_view_find_command(clish_view_t * this,
+static int cmd_by_name(const void *key, const void *data) {
+	const char *name = (const char *)key;
+	const clish_command_t *d = (const clish_command_t *)data;
+	return lub_string_nocasecmp(name, clish_command__get_name(d));
+}
+
+/*--------------------------------------------------------- */
+clish_command_t *clish_view_find_command(clish_view_t *this,
 	const char *name, bool_t inherit)
 {
 	clish_command_t *result = NULL;
 
 	/* Search the current view */
-	result = lub_bintree_find(&this->tree, name);
+	result = lub_list_find(this->cmds, cmd_by_name, name);
 
 	if (inherit) {
 		lub_list_node_t *iter;
@@ -192,7 +189,7 @@ clish_command_t *clish_view_find_command(clish_view_t * this,
 		clish_nspace_t *nspace;
 
 		/* Iterate elements. It's important to iterate
-		 * items starting from tail bacause the next
+		 * items starting from tail because the next
 		 * NAMESPACE has higher priority than previous one
 		 * in a case then the both NAMESPACEs have the
 		 * commands with the same name.

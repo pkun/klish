@@ -14,17 +14,13 @@
 #include <string.h>
 #include <stdio.h>
 
-static void
-clish_command_init(clish_command_t *this, const char *name, const char *text)
+static void clish_command_init(clish_command_t *this,
+	const char *name, const char *text)
 {
-	/* initialise the node part */
 	this->name = lub_string_dup(name);
 	this->text = lub_string_dup(text);
 
-	/* Be a good binary tree citizen */
-	lub_bintree_node_init(&this->bt_node);
-
-	/* set up defaults */
+	/* Defaults */
 	this->link = NULL;
 	this->alias = NULL;
 	this->alias_view = NULL;
@@ -71,27 +67,11 @@ static void clish_command_fini(clish_command_t * this)
 }
 
 /*--------------------------------------------------------- */
-size_t clish_command_bt_offset(void)
+int clish_command_compare(const void *first, const void *second)
 {
-	return offsetof(clish_command_t, bt_node);
-}
-
-/*--------------------------------------------------------- */
-int clish_command_bt_compare(const void *clientnode, const void *clientkey)
-{
-	const clish_command_t *this = clientnode;
-	const char *key = clientkey;
-
-	return lub_string_nocasecmp(this->name, key);
-}
-
-/*--------------------------------------------------------- */
-void clish_command_bt_getkey(const void *clientnode, lub_bintree_key_t * key)
-{
-	const clish_command_t *this = clientnode;
-
-	/* fill out the opaque key */
-	strcpy((char *)key, this->name);
+	const clish_command_t *f = (const clish_command_t *)first;
+	const clish_command_t *s = (const clish_command_t *)second;
+	return lub_string_nocasecmp(f->name, s->name);
 }
 
 /*--------------------------------------------------------- */
@@ -121,8 +101,6 @@ clish_command_t *clish_command_new_link(const char *name,
 	this->name = lub_string_dup(name);
 	/* Initialise the help (other than original help) */
 	this->text = lub_string_dup(help);
-	/* Be a good binary tree citizen */
-	lub_bintree_node_init(&this->bt_node);
 	/* It a link to command so set the link flag */
 	this->link = ref;
 
@@ -140,7 +118,6 @@ clish_command_t * clish_command_alias_to_link(clish_command_t *this, clish_comma
 		return NULL;
 	memcpy(&tmp, this, sizeof(tmp));
 	*this = *ref;
-	memcpy(&this->bt_node, &tmp.bt_node, sizeof(tmp.bt_node));
 	this->name = lub_string_dup(tmp.name); /* Save an original name */
 	this->text = lub_string_dup(tmp.text); /* Save an original help */
 	this->link = ref;
@@ -151,8 +128,9 @@ clish_command_t * clish_command_alias_to_link(clish_command_t *this, clish_comma
 }
 
 /*--------------------------------------------------------- */
-void clish_command_delete(clish_command_t * this)
+void clish_command_delete(void *data)
 {
+	clish_command_t *this = (clish_command_t *)data;
 	clish_command_fini(this);
 	free(this);
 }
