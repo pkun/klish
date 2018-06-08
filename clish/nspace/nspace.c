@@ -30,29 +30,19 @@ static void clish_nspace_init(clish_nspace_t *this,  const char *view_name)
 	this->prefix_cmd = NULL;
 	this->access = NULL;
 
-	/* initialise the tree of commands links for this nspace */
-	lub_bintree_init(&this->tree,
-		clish_command_bt_offset(),
-		clish_command_bt_compare, clish_command_bt_getkey);
+	this->cmds = lub_list_new(clish_command_compare, clish_command_delete);
 }
 
 /*--------------------------------------------------------- */
 static void clish_nspace_fini(clish_nspace_t *this)
 {
-	clish_command_t *cmd;
-
-	/* deallocate the memory for this instance */
+	/* Deallocate the memory for this instance */
 	if (this->prefix) {
 		free(this->prefix);
 		regfree(&this->prefix_regex);
 	}
-	/* delete each command link held by this nspace */
-	while ((cmd = lub_bintree_findfirst(&this->tree))) {
-		/* remove the command from the tree */
-		lub_bintree_remove(&this->tree, cmd);
-		/* release the instance */
-		clish_command_delete(cmd);
-	}
+	/* Delete COMMANDs */
+	lub_list_free_all(this->cmds);
 	/* Delete prefix pseudo-command */
 	if (this->prefix_cmd) {
 		clish_command_delete(this->prefix_cmd);
@@ -83,6 +73,7 @@ static clish_command_t *clish_nspace_find_create_command(clish_nspace_t * this,
 	const char *help = NULL;
 	clish_command_t *tmp = NULL;
 	const char *str = NULL;
+	lub_list_node_t *iter = NULL;
 
 	assert(prefix);
 	if (!ref) {
@@ -99,7 +90,7 @@ static clish_command_t *clish_nspace_find_create_command(clish_nspace_t * this,
 	}
 
 	/* The command is cached already */
-	if ((cmd = lub_bintree_find(&this->tree, name))) {
+	if ((cmd = lub_list_find(this->cmds, clish_command_fn_find_by_name, name))) {
 		free(name);
 		return cmd;
 	}
@@ -110,18 +101,24 @@ static clish_command_t *clish_nspace_find_create_command(clish_nspace_t * this,
 	clish_command__set_dynamic(cmd, BOOL_TRUE);
 
 	/* Delete proxy commands with another prefixes */
-	tmp = lub_bintree_findfirst(&this->tree);
+	iter = lub_list__get_head(this->cmds);
+	if (iter)
+		tmp = lub_list_node__get_data(iter);
 	if (tmp)
 		str = clish_command__get_name(tmp);
 	if (str && (lub_string_nocasestr(str, prefix) != str)) {
 		do {
-			lub_bintree_remove(&this->tree, tmp);
 			clish_command_delete(tmp);
-		} while ((tmp = lub_bintree_findfirst(&this->tree)));
+			lub_list_del(this->cmds, iter);
+			lub_list_node_free(iter);
+			iter = lub_list__get_head(this->cmds);
+			if (iter)
+				tmp = lub_list_node__get_data(iter);
+		} while (iter);
 	}
 
 	/* Insert command link into the tree */
-	if (-1 == lub_bintree_insert(&this->tree, cmd)) {
+	if (!lub_list_add(this->cmds, cmd)) {
 		clish_command_delete(cmd);
 		cmd = NULL;
 	}
@@ -262,16 +259,15 @@ const clish_command_t *clish_nspace_find_next_completion(clish_nspace_t * this,
 /*--------------------------------------------------------- */
 void clish_nspace_clean_proxy(clish_nspace_t * this)
 {
-	clish_command_t *cmd = NULL;
+	lub_list_node_t *iter = NULL;
 
 	/* Recursive proxy clean */
 	clish_view_clean_proxy(this->view);
 	/* Delete each command proxy held by this nspace */
-	while ((cmd = lub_bintree_findfirst(&this->tree))) {
-		/* remove the command from the tree */
-		lub_bintree_remove(&this->tree, cmd);
-		/* release the instance */
-		clish_command_delete(cmd);
+	while ((iter = lub_list__get_tail(this->cmds))) {
+		clish_command_delete(lub_list_node__get_data(iter));
+		lub_list_del(this->cmds, iter);
+		lub_list_node_free(iter);
 	}
 }
 

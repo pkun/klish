@@ -73,4 +73,7 @@ clish_view_restore_e clish_command__get_restore(const clish_command_t * instance
 const clish_command_t * clish_command__get_orig(const clish_command_t * instance);
 const clish_command_t * clish_command__get_cmd(const clish_command_t * instance);
 
+// Find functions
+int clish_command_fn_find_by_name(const void *key, const void *data);
+
 #endif				/* _clish_command_h */

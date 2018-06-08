@@ -60,7 +60,7 @@ _CLISH_GET(view, unsigned int, depth);
 _CLISH_SET(view, clish_view_restore_e, restore);
 _CLISH_GET(view, clish_view_restore_e, restore);
 
-lub_bintree_t * clish_view__get_tree(clish_view_t *instance);
+lub_list_t * clish_view__get_tree(clish_view_t *instance);
 
 #endif				/* _clish_view_h */
 /** @} clish_view */

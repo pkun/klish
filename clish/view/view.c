@@ -168,20 +168,13 @@ clish_command_t *clish_view_resolve_command(clish_view_t *this,
 }
 
 /*--------------------------------------------------------- */
-static int cmd_by_name(const void *key, const void *data) {
-	const char *name = (const char *)key;
-	const clish_command_t *d = (const clish_command_t *)data;
-	return lub_string_nocasecmp(name, clish_command__get_name(d));
-}
-
-/*--------------------------------------------------------- */
 clish_command_t *clish_view_find_command(clish_view_t *this,
 	const char *name, bool_t inherit)
 {
 	clish_command_t *result = NULL;
 
 	/* Search the current view */
-	result = lub_list_find(this->cmds, cmd_by_name, name);
+	result = lub_list_find(this->cmds, clish_command_fn_find_by_name, name);
 
 	if (inherit) {
 		lub_list_node_t *iter;
@@ -210,6 +203,7 @@ clish_command_t *clish_view_find_command(clish_view_t *this,
 static const clish_command_t *find_next_completion(clish_view_t * this,
 		const char *iter_cmd, const char *line)
 {
+#if 0 // WORK
 	clish_command_t *cmd;
 	const char *name = "";
 	lub_argv_t *largv;
@@ -238,6 +232,8 @@ static const clish_command_t *find_next_completion(clish_view_t * this,
 	lub_argv_delete(largv);
 
 	return cmd;
+#endif
+return NULL;
 }
 
 /*--------------------------------------------------------- */
@@ -314,8 +310,8 @@ CLISH_SET(view, clish_view_restore_e, restore);
 CLISH_GET(view, clish_view_restore_e, restore);
 
 /*-------------------------------------------------------- */
-lub_bintree_t * clish_view__get_tree(clish_view_t *inst)
+lub_list_t * clish_view__get_tree(clish_view_t *inst)
 {
 	assert(inst);
-	return &inst->tree;
+	return inst->cmds;
 }

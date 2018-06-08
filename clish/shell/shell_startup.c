@@ -142,10 +142,8 @@ int clish_shell_prepare(clish_shell_t *this)
 	clish_command_t *cmd;
 	clish_view_t *view;
 	clish_nspace_t *nspace;
-	lub_list_t *view_tree, *nspace_tree;
-	lub_list_node_t *nspace_iter, *view_iter;
-	lub_bintree_t *cmd_tree;
-	lub_bintree_iterator_t cmd_iter;
+	lub_list_t *view_tree, *nspace_tree, *cmd_tree;
+	lub_list_node_t *nspace_iter, *view_iter, *cmd_iter;
 	clish_hook_access_fn_t *access_fn = NULL;
 	clish_paramv_t *paramv;
 	int i = 0;
@@ -191,7 +189,7 @@ int clish_shell_prepare(clish_shell_t *this)
 	/* Iterate the VIEWs */
 	view_tree = this->view_tree;
 	view_iter = lub_list_iterator_init(view_tree);
-	while(view_iter) {
+	while (view_iter) {
 		lub_list_node_t *old_view_iter;
 		view = (clish_view_t *)lub_list_node__get_data(view_iter);
 		old_view_iter = view_iter;
@@ -212,7 +210,7 @@ int clish_shell_prepare(clish_shell_t *this)
 		/* Iterate the NAMESPACEs */
 		nspace_tree = clish_view__get_nspaces(view);
 		nspace_iter = lub_list__get_head(nspace_tree);
-		while(nspace_iter) {
+		while (nspace_iter) {
 			clish_view_t *ref_view;
 			lub_list_node_t *old_nspace_iter;
 			nspace = (clish_nspace_t *)lub_list_node__get_data(nspace_iter);
@@ -253,11 +251,15 @@ int clish_shell_prepare(clish_shell_t *this)
 
 		/* Iterate the COMMANDs */
 		cmd_tree = clish_view__get_tree(view);
-		cmd = lub_bintree_findfirst(cmd_tree);
-		for (lub_bintree_iterator_init(&cmd_iter, cmd_tree, cmd);
-			cmd; cmd = lub_bintree_iterator_next(&cmd_iter)) {
-			int cmd_is_alias = clish_command__get_alias(cmd)?1:0;
+		cmd_iter = lub_list_iterator_init(cmd_tree);
+		while (cmd_iter) {
+			int cmd_is_alias;
 			clish_param_t *args = NULL;
+			lub_list_node_t *old_cmd_iter;
+			cmd = (clish_command_t *)lub_list_node__get_data(cmd_iter);
+			old_cmd_iter = cmd_iter;
+			cmd_iter = lub_list_node__get_next(cmd_iter);
+			cmd_is_alias = clish_command__get_alias(cmd) ? 1 : 0;
 
 			/* Check access rights for the COMMAND */
 			if (access_fn && clish_command__get_access(cmd) &&
@@ -266,7 +268,8 @@ int clish_shell_prepare(clish_shell_t *this)
 				fprintf(stderr, "Warning: Access denied. Remove COMMAND \"%s\" from VIEW \"%s\"\n",
 					clish_command__get_name(cmd), clish_view__get_name(view));
 #endif
-				lub_bintree_remove(cmd_tree, cmd);
+				lub_list_del(cmd_tree, old_cmd_iter);
+				lub_list_node_free(old_cmd_iter);
 				clish_command_delete(cmd);
 				continue;
 			}
@@ -289,7 +292,8 @@ int clish_shell_prepare(clish_shell_t *this)
 					fprintf(stderr, "Warning: Remove unresolved link \"%s\" from \"%s\" VIEW\n",
 						clish_command__get_name(cmd), clish_view__get_name(view));
 #endif
-					lub_bintree_remove(cmd_tree, cmd);
+					lub_list_del(cmd_tree, old_cmd_iter);
+					lub_list_node_free(old_cmd_iter);
 					clish_command_delete(cmd);
 					continue;
 					/*fprintf(stderr, CLISH_XML_ERROR_STR"Broken VIEW for alias \"%s\"\n",
@@ -313,7 +317,8 @@ int clish_shell_prepare(clish_shell_t *this)
 					fprintf(stderr, "Warning: Access denied. Remove COMMAND \"%s\" from VIEW \"%s\"\n",
 						clish_command__get_name(cmd), clish_view__get_name(view));
 #endif
-					lub_bintree_remove(cmd_tree, cmd);
+					lub_list_del(cmd_tree, old_cmd_iter);
+					lub_list_node_free(old_cmd_iter);
 					clish_command_delete(cmd);
 					continue;
 				}

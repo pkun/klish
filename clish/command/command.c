@@ -281,3 +281,10 @@ const clish_command_t * clish_command__get_cmd(const clish_command_t * this)
 		return clish_command__get_cmd(this->link);
 	return NULL;
 }
+
+/*--------------------------------------------------------- */
+int clish_command_fn_find_by_name(const void *key, const void *data) {
+	const char *name = (const char *)key;
+	const clish_command_t *d = (const clish_command_t *)data;
+	return lub_string_nocasecmp(name, clish_command__get_name(d));
+}
