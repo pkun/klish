@@ -29,11 +29,6 @@ static void clish_shell_init(clish_shell_t * this,
 	/* Init PTYPE list */
 	this->ptype_tree = lub_list_new(clish_ptype_compare, clish_ptype_free);
 
-	/* initialise the tree of vars */
-	lub_bintree_init(&this->var_tree,
-		clish_var_bt_offset(),
-		clish_var_bt_compare, clish_var_bt_getkey);
-
 	/* Initialize plugin list */
 	this->plugins = lub_list_new(NULL, clish_plugin_free);
 
@@ -97,7 +92,6 @@ static void clish_shell_init(clish_shell_t * this,
 /*--------------------------------------------------------- */
 static void clish_shell_fini(clish_shell_t *this)
 {
-	clish_var_t *var;
 	unsigned int i;
 
 	/* Free all loaded plugins */
@@ -108,12 +102,6 @@ static void clish_shell_fini(clish_shell_t *this)
 
 	/* Delete each PTYPE  */
 	lub_list_free_all(this->ptype_tree);
-
-	/* delete each VAR held  */
-	while ((var = lub_bintree_findfirst(&this->var_tree))) {
-		lub_bintree_remove(&this->var_tree, var);
-		clish_var_delete(var);
-	}
 
 	/* Free empty hooks */
 	for (i = 0; i < CLISH_SYM_TYPE_MAX; i++) {

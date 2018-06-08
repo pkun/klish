@@ -17,7 +17,7 @@
 /*
  * search the current viewid string for a variable
  */
-void clish_shell__expand_viewid(const char *viewid, lub_bintree_t *tree,
+void clish_shell__expand_viewid(const char *viewid, lub_list_t *vars,
 	clish_context_t *context)
 {
 	char *expanded;
@@ -40,7 +40,7 @@ void clish_shell__expand_viewid(const char *viewid, lub_bintree_t *tree,
 		value++;
 		/* Create var instance */
 		var = clish_var_new(q);
-		lub_bintree_insert(tree, var);
+		lub_list_add(vars, var);
 		clish_var__set_value(var, value);
 	}
 	lub_string_free(expanded);
@@ -148,9 +148,9 @@ static char *find_context_var(const char *name, clish_context_t *this)
 }
 
 /*--------------------------------------------------------- */
-static char *find_var(const char *name, lub_bintree_t *tree, clish_context_t *context)
+static char *find_var(const char *name, lub_list_t *vars, clish_context_t *context)
 {
-	clish_var_t *var = lub_bintree_find(tree, name);
+	clish_var_t *var = lub_list_find(vars, clish_var_fn_find_by_name, name);
 	const char *value;
 	bool_t dynamic;
 	char *res = NULL;
@@ -195,7 +195,7 @@ static char *find_var(const char *name, lub_bintree_t *tree, clish_context_t *co
 static char *find_global_var(const char *name, clish_context_t *context)
 {
 	clish_shell_t *shell = clish_context__get_shell(context);
-	return find_var(name, &shell->var_tree, context);
+	return find_var(name, clish_view__get_vars(shell->global), context);
 }
 
 /*--------------------------------------------------------- */
@@ -205,7 +205,7 @@ static char *find_viewid_var(const char *name, clish_context_t *context)
 	int depth = clish_shell__get_depth(shell);
 	if (depth < 0)
 		return NULL;
-	return find_var(name, &shell->pwdv[depth]->viewid, context);
+	return find_var(name, shell->pwdv[depth]->viewid, context);
 }
 
 static char * chardiff(const char *syms, const char *minus)

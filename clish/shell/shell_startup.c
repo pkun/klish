@@ -250,7 +250,7 @@ int clish_shell_prepare(clish_shell_t *this)
 		}
 
 		/* Iterate the COMMANDs */
-		cmd_tree = clish_view__get_tree(view);
+		cmd_tree = clish_view__get_cmds(view);
 		cmd_iter = lub_list_iterator_init(cmd_tree);
 		while (cmd_iter) {
 			int cmd_is_alias;

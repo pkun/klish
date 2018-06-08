@@ -11,8 +11,11 @@ int clish_var_bt_compare(const void *clientnode, const void *clientkey);
 void clish_var_bt_getkey(const void *clientnode, lub_bintree_key_t * key);
 size_t clish_var_bt_offset(void);
 clish_var_t *clish_var_new(const char *name);
-void clish_var_delete(clish_var_t *instance);
+void clish_var_delete(void *instance);
 void clish_var_dump(const clish_var_t *instance);
+
+int clish_var_compare(const void *first, const void *second);
+int clish_var_fn_find_by_name(const void *key, const void *data);
 
 _CLISH_GET_STR(var, name);
 _CLISH_SET(var, bool_t, dynamic);

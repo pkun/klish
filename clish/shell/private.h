@@ -1,7 +1,6 @@
 /*
  * shell/private.h - private interface to the shell class
  */
-#include "lub/bintree.h"
 #include "lub/list.h"
 #include "tinyrl/tinyrl.h"
 #include "clish/shell.h"
@@ -30,7 +29,7 @@ struct clish_shell_file_s {
 typedef struct {
 	char *line;
 	clish_view_t *view;
-	lub_bintree_t viewid;
+	lub_list_t *viewid;
 	clish_pargv_t *pargv; /* Saved pargv structure */
 	char *cmd; /* Command name without prefix */
 	char *prefix; /* Prefix string if exists */
@@ -48,7 +47,6 @@ struct clish_context_s {
 struct clish_shell_s {
 	lub_list_t *view_tree; /* VIEW list */
 	lub_list_t *ptype_tree; /* PTYPE list */
-	lub_bintree_t var_tree; /* Tree of global variables */
 
 	/* Hooks */
 	clish_sym_t *hooks[CLISH_SYM_TYPE_MAX]; /* Callback hooks */
@@ -139,7 +137,7 @@ void clish_shell_param_generator(clish_shell_t * instance, lub_argv_t *matches,
 	const clish_command_t * cmd, const char *line, unsigned offset);
 char **clish_shell_tinyrl_completion(tinyrl_t * tinyrl,
 	const char *line, unsigned start, unsigned end);
-void clish_shell__expand_viewid(const char *viewid, lub_bintree_t *tree,
+void clish_shell__expand_viewid(const char *viewid, lub_list_t *vars,
 	clish_context_t *context);
 void clish_shell__init_pwd(clish_shell_pwd_t *pwd);
 void clish_shell__fini_pwd(clish_shell_pwd_t *pwd);

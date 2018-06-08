@@ -35,7 +35,7 @@ static void clish_view_init(clish_view_t * this, const char *name)
 	this->cmds = lub_list_new(clish_command_compare, clish_command_delete);
 
 	/* Init VAR list */
-	this->vars = lub_list_new(clish_command_compare, clish_command_delete);
+	this->vars = lub_list_new(clish_var_compare, clish_var_delete);
 
 	/* Initialise the list of NAMESPACEs.
 	 * It's important to add new items to the
@@ -299,6 +299,8 @@ const char *clish_view_find_hotkey(const clish_view_t *this, int code)
 }
 
 CLISH_GET(view, lub_list_t *, nspaces);
+CLISH_GET(view, lub_list_t *, cmds);
+CLISH_GET(view, lub_list_t *, vars);
 CLISH_GET_STR(view, name);
 CLISH_SET_STR_ONCE(view, prompt);
 CLISH_GET_STR(view, prompt);
@@ -308,10 +310,3 @@ CLISH_SET(view, unsigned int, depth);
 CLISH_GET(view, unsigned int, depth);
 CLISH_SET(view, clish_view_restore_e, restore);
 CLISH_GET(view, clish_view_restore_e, restore);
-
-/*-------------------------------------------------------- */
-lub_list_t * clish_view__get_tree(clish_view_t *inst)
-{
-	assert(inst);
-	return inst->cmds;
-}

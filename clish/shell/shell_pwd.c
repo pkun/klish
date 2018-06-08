@@ -17,28 +17,23 @@ void clish_shell__init_pwd(clish_shell_pwd_t *pwd)
 	pwd->pargv = NULL;
 	pwd->cmd = NULL;
 	pwd->prefix = NULL;
-	/* initialise the tree of vars */
-	lub_bintree_init(&pwd->viewid,
-		clish_var_bt_offset(),
-		clish_var_bt_compare, clish_var_bt_getkey);
+
+	/* Init VARs */
+	pwd->viewid = lub_list_new(clish_var_compare, clish_var_delete);
 }
 
 /*--------------------------------------------------------- */
 void clish_shell__fini_pwd(clish_shell_pwd_t *pwd)
 {
-	clish_var_t *var;
-
 	lub_string_free(pwd->line);
 	lub_string_free(pwd->cmd);
 	if (pwd->prefix)
 		lub_string_free(pwd->prefix);
 	pwd->view = NULL;
 	clish_pargv_delete(pwd->pargv);
-	/* delete each VAR held  */
-	while ((var = lub_bintree_findfirst(&pwd->viewid))) {
-		lub_bintree_remove(&pwd->viewid, var);
-		clish_var_delete(var);
-	}
+
+	/* Free VARs  */
+	lub_list_free_all(pwd->viewid);
 }
 
 /*--------------------------------------------------------- */
@@ -88,7 +83,7 @@ void clish_shell__set_pwd(clish_shell_t *this,
 				newpwd->prefix = lub_string_dupn(full_cmd_name, len - 1);
 		}
 	}
-	clish_shell__expand_viewid(viewid, &newpwd->viewid, context);
+	clish_shell__expand_viewid(viewid, newpwd->viewid, context);
 	clish_shell__fini_pwd(this->pwdv[index]);
 	free(this->pwdv[index]);
 	this->pwdv[index] = newpwd;

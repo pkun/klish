@@ -1106,6 +1106,8 @@ static int process_config(clish_shell_t *shell, clish_xmlnode_t *element,
 static int process_var(clish_shell_t *shell, clish_xmlnode_t *element,
 	void *parent)
 {
+	clish_view_t *v = (clish_view_t *)parent;
+	lub_list_t *vars = clish_view__get_vars(v);
 	clish_var_t *var = NULL;
 	int res = -1;
 
@@ -1119,7 +1121,7 @@ static int process_var(clish_shell_t *shell, clish_xmlnode_t *element,
 		goto error;
 	}
 	/* Check if this var doesn't already exist */
-	var = (clish_var_t *)lub_bintree_find(&shell->var_tree, name);
+	var = lub_list_find(vars, clish_var_fn_find_by_name, name);
 	if (var) {
 		fprintf(stderr, CLISH_XML_ERROR_STR"Duplicate VAR name=\"%s\".\n", name);
 		goto error;
@@ -1127,7 +1129,7 @@ static int process_var(clish_shell_t *shell, clish_xmlnode_t *element,
 
 	/* Create var instance */
 	var = clish_var_new(name);
-	lub_bintree_insert(&shell->var_tree, var);
+	lub_list_add(vars, var);
 
 	if (dynamic && lub_string_nocasecmp(dynamic, "true") == 0)
 		clish_var__set_dynamic(var, BOOL_TRUE);

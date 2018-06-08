@@ -50,6 +50,8 @@ int clish_view_insert_hotkey(const clish_view_t *instance, const char *key, cons
 const char *clish_view_find_hotkey(const clish_view_t *instance, int code);
 
 _CLISH_GET(view, lub_list_t *, nspaces);
+_CLISH_GET(view, lub_list_t *, cmds);
+_CLISH_GET(view, lub_list_t *, vars);
 _CLISH_GET_STR(view, name);
 _CLISH_SET_STR_ONCE(view, prompt);
 _CLISH_GET_STR(view, prompt);
@@ -59,8 +61,6 @@ _CLISH_SET(view, unsigned int, depth);
 _CLISH_GET(view, unsigned int, depth);
 _CLISH_SET(view, clish_view_restore_e, restore);
 _CLISH_GET(view, clish_view_restore_e, restore);
-
-lub_list_t * clish_view__get_tree(clish_view_t *instance);
 
 #endif				/* _clish_view_h */
 /** @} clish_view */

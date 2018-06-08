@@ -67,8 +67,9 @@ clish_var_t *clish_var_new(const char *name)
 }
 
 /*--------------------------------------------------------- */
-void clish_var_delete(clish_var_t *this)
+void clish_var_delete(void *data)
 {
+	clish_var_t *this = (clish_var_t *)data;
 	clish_var_fini(this);
 	free(this);
 }
@@ -81,3 +82,18 @@ CLISH_GET_STR(var, value);
 CLISH_SET_STR(var, saved);
 CLISH_GET_STR(var, saved);
 CLISH_GET(var, clish_action_t *, action);
+
+/*--------------------------------------------------------- */
+int clish_var_compare(const void *first, const void *second)
+{
+	const clish_var_t *f = (const clish_var_t *)first;
+	const clish_var_t *s = (const clish_var_t *)second;
+	return lub_string_nocasecmp(f->name, s->name);
+}
+
+/*--------------------------------------------------------- */
+int clish_var_fn_find_by_name(const void *key, const void *data) {
+	const char *name = (const char *)key;
+	const clish_var_t *d = (const clish_var_t *)data;
+	return lub_string_nocasecmp(name, clish_var__get_name(d));
+}
