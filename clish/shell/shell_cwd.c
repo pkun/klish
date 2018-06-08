@@ -19,7 +19,7 @@ void clish_shell__init_cwd(clish_shell_cwd_t *cwd)
 	cwd->prefix = NULL;
 
 	/* Init VARs */
-	cwd->viewid = lub_list_new(clish_var_compare, clish_var_delete);
+	cwd->vars = lub_list_new(clish_var_compare, clish_var_delete);
 }
 
 /*--------------------------------------------------------- */
@@ -33,7 +33,7 @@ void clish_shell__fini_cwd(clish_shell_cwd_t *cwd)
 	clish_pargv_delete(cwd->pargv);
 
 	/* Free VARs  */
-	lub_list_free_all(cwd->viewid);
+	lub_list_free_all(cwd->vars);
 }
 
 /*--------------------------------------------------------- */
@@ -83,7 +83,7 @@ void clish_shell__set_cwd(clish_shell_t *this,
 				newcwd->prefix = lub_string_dupn(full_cmd_name, len - 1);
 		}
 	}
-	clish_shell__expand_viewid(viewid, newcwd->viewid, context);
+	clish_shell__expand_viewid(viewid, newcwd->vars, context);
 	clish_shell__fini_cwd(this->cwdv[index]);
 	free(this->cwdv[index]);
 	this->cwdv[index] = newcwd;

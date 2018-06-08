@@ -206,7 +206,7 @@ static char *find_viewid_var(const char *name, clish_context_t *context)
 	int depth = clish_shell__get_depth(shell);
 	if (depth < 0)
 		return NULL;
-	return find_var(name, shell->cwdv[depth]->viewid, context);
+	return find_var(name, shell->cwdv[depth]->vars, context);
 }
 
 static char * chardiff(const char *syms, const char *minus)

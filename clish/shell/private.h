@@ -29,7 +29,7 @@ struct clish_shell_file_s {
 typedef struct {
 	char *line;
 	clish_view_t *view;
-	lub_list_t *viewid;
+	lub_list_t *vars;
 	clish_pargv_t *pargv; /* Saved pargv structure */
 	char *cmd; /* Command name without prefix */
 	char *prefix; /* Prefix string if exists */
