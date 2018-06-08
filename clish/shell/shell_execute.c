@@ -105,7 +105,7 @@ int clish_shell_execute(clish_context_t *context, char **out)
 		if ((CLISH_RESTORE_VIEW == restore) &&
 			(clish_command__get_pview(cmd) != cur_view)) {
 			clish_view_t *view = clish_command__get_pview(cmd);
-			clish_shell__set_pwd(this, NULL, view, NULL, context);
+			clish_shell__set_cwd(this, NULL, view, NULL, context);
 		} else if ((CLISH_RESTORE_DEPTH == restore) &&
 			(clish_command__get_depth(cmd) < this->depth)) {
 			this->depth = clish_command__get_depth(cmd);
@@ -166,10 +166,10 @@ int clish_shell_execute(clish_context_t *context, char **out)
 				fprintf(stderr, "System error: Can't "
 					"change view to %s\n", viewname);
 			lub_string_free(viewname);
-			/* Save the PWD */
+			/* Save the CWD */
 			if (view) {
 				char *line = clish_shell__get_line(context);
-				clish_shell__set_pwd(this, line, view,
+				clish_shell__set_cwd(this, line, view,
 					clish_command__get_viewid(cmd), context);
 				lub_string_free(line);
 			}

@@ -148,7 +148,7 @@ CLISH_HOOK_CONFIG(clish_hook_config)
 		lub_string_free(str);
 	}
 
-	/* Add pwd */
+	/* Add cwd */
 	if (clish_config__get_depth(config)) {
 		str = clish_shell_expand(clish_config__get_depth(config), SHELL_VAR_ACTION, clish_context);
 		num = str2ushort(str);
@@ -156,7 +156,7 @@ CLISH_HOOK_CONFIG(clish_hook_config)
 	} else {
 		num = clish_command__get_depth(cmd);
 	}
-	str = clish_shell__get_pwd_full(this, num);
+	str = clish_shell__get_cwd_full(this, num);
 	if (str) {
 		lub_string_cat(&command, " ");
 		lub_string_cat(&command, str);

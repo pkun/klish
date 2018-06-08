@@ -158,19 +158,19 @@ clish_view_t *clish_shell__get_view(const clish_shell_t * instance);
 clish_view_t *clish_shell__set_depth(clish_shell_t *instance, unsigned int depth);
 const char *clish_shell__get_viewid(const clish_shell_t * instance);
 tinyrl_t *clish_shell__get_tinyrl(const clish_shell_t * instance);
-void clish_shell__set_pwd(clish_shell_t *instance, const char * line,
+void clish_shell__set_cwd(clish_shell_t *instance, const char * line,
 	clish_view_t * view, const char * viewid, clish_context_t *context);
-char *clish_shell__get_pwd_line(const clish_shell_t * instance,
+char *clish_shell__get_cwd_line(const clish_shell_t * instance,
 	 unsigned int index);
-clish_pargv_t *clish_shell__get_pwd_pargv(const clish_shell_t *instance,
+clish_pargv_t *clish_shell__get_cwd_pargv(const clish_shell_t *instance,
 	unsigned int index);
-char *clish_shell__get_pwd_cmd(const clish_shell_t *instance,
+char *clish_shell__get_cwd_cmd(const clish_shell_t *instance,
 	unsigned int index);
-char *clish_shell__get_pwd_prefix(const clish_shell_t *instance,
+char *clish_shell__get_cwd_prefix(const clish_shell_t *instance,
 	unsigned int index);
-char *clish_shell__get_pwd_full(const clish_shell_t * instance,
+char *clish_shell__get_cwd_full(const clish_shell_t * instance,
 	unsigned int depth);
-clish_view_t *clish_shell__get_pwd_view(const clish_shell_t * instance,
+clish_view_t *clish_shell__get_cwd_view(const clish_shell_t * instance,
 	unsigned int index);
 FILE *clish_shell__get_istream(const clish_shell_t * instance);
 FILE *clish_shell__get_ostream(const clish_shell_t * instance);

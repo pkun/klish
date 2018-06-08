@@ -326,7 +326,7 @@ static bool_t clish_shell_tinyrl_hotkey(tinyrl_t *this, int key)
 
 	i = clish_shell__get_depth(shell);
 	while (i >= 0) {
-		view = clish_shell__get_pwd_view(shell, i);
+		view = clish_shell__get_cwd_view(shell, i);
 		cmd = clish_view_find_hotkey(view, key);
 		if (cmd)
 			break;

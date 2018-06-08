@@ -55,8 +55,8 @@ static void clish_shell_init(clish_shell_t * this,
 	this->overview = NULL;
 	this->tinyrl = clish_shell_tinyrl_new(istream, ostream, 0);
 	this->current_file = NULL;
-	this->pwdv = NULL;
-	this->pwdc = 0;
+	this->cwdv = NULL;
+	this->cwdc = 0;
 	this->depth = -1; /* Current depth is undefined */
 	this->client = NULL;
 	this->lockfile = lub_string_dup(CLISH_LOCK_PATH);
@@ -130,13 +130,13 @@ static void clish_shell_fini(clish_shell_t *this)
 	/* delete the tinyrl object */
 	clish_shell_tinyrl_delete(this->tinyrl);
 
-	/* finalize each of the pwd strings */
-	for (i = 0; i < this->pwdc; i++) {
-		clish_shell__fini_pwd(this->pwdv[i]);
-		free(this->pwdv[i]);
+	/* finalize each of the cwd strings */
+	for (i = 0; i < this->cwdc; i++) {
+		clish_shell__fini_cwd(this->cwdv[i]);
+		free(this->cwdv[i]);
 	}
-	/* free the pwd vector */
-	free(this->pwdv);
+	/* free the cwd vector */
+	free(this->cwdv);
 	konf_client_free(this->client);
 
 	lub_string_free(this->lockfile);

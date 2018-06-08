@@ -12,7 +12,7 @@ libclish_la_SOURCES += \
 	clish/shell/shell_loop.c \
 	clish/shell/shell_startup.c \
 	clish/shell/shell_wdog.c \
-	clish/shell/shell_pwd.c \
+	clish/shell/shell_cwd.c \
 	clish/shell/shell_tinyrl.c \
 	clish/shell/shell_plugin.c \
 	clish/shell/shell_xml.c \

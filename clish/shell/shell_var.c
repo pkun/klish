@@ -139,9 +139,10 @@ static char *find_context_var(const char *name, clish_context_t *this)
 		tmp[sizeof(tmp) - 1] = '\0';
 		result = strdup(tmp);
 
-	} else if (!lub_string_nocasecmp(name, "_cur_pwd")) {
+	} else if (!lub_string_nocasecmp(name, "_cur_pwd") ||
+		!lub_string_nocasecmp(name, "_cwd")) {
 		int depth = clish_shell__get_depth(shell);
-		result = clish_shell__get_pwd_full(shell, depth);
+		result = clish_shell__get_cwd_full(shell, depth);
 	}
 
 	return result;
@@ -205,7 +206,7 @@ static char *find_viewid_var(const char *name, clish_context_t *context)
 	int depth = clish_shell__get_depth(shell);
 	if (depth < 0)
 		return NULL;
-	return find_var(name, shell->pwdv[depth]->viewid, context);
+	return find_var(name, shell->cwdv[depth]->viewid, context);
 }
 
 static char * chardiff(const char *syms, const char *minus)

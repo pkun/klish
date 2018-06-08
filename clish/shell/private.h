@@ -33,7 +33,7 @@ typedef struct {
 	clish_pargv_t *pargv; /* Saved pargv structure */
 	char *cmd; /* Command name without prefix */
 	char *prefix; /* Prefix string if exists */
-} clish_shell_pwd_t;
+} clish_shell_cwd_t;
 
 /* Context structure */
 struct clish_context_s {
@@ -65,8 +65,8 @@ struct clish_shell_s {
 	char *overview; /* Overview text for this shell */
 	tinyrl_t *tinyrl; /* Tiny readline instance */
 	clish_shell_file_t *current_file; /* file currently in use for input */
-	clish_shell_pwd_t **pwdv; /* Levels for the config file structure */
-	unsigned int pwdc;
+	clish_shell_cwd_t **cwdv; /* Levels for the config file structure */
+	unsigned int cwdc;
 	int depth;
 	konf_client_t *client;
 	char *lockfile;
@@ -139,7 +139,7 @@ char **clish_shell_tinyrl_completion(tinyrl_t * tinyrl,
 	const char *line, unsigned start, unsigned end);
 void clish_shell__expand_viewid(const char *viewid, lub_list_t *vars,
 	clish_context_t *context);
-void clish_shell__init_pwd(clish_shell_pwd_t *pwd);
-void clish_shell__fini_pwd(clish_shell_pwd_t *pwd);
+void clish_shell__init_cwd(clish_shell_cwd_t *cwd);
+void clish_shell__fini_cwd(clish_shell_cwd_t *cwd);
 int clish_shell_timeout_fn(tinyrl_t *tinyrl);
 int clish_shell_keypress_fn(tinyrl_t *tinyrl, int key);

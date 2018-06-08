@@ -38,7 +38,7 @@ clish_view_t *clish_shell__get_view(const clish_shell_t * this)
 	assert(this);
 	if (this->depth < 0)
 		return NULL;
-	return this->pwdv[this->depth]->view;
+	return this->cwdv[this->depth]->view;
 }
 
 /*--------------------------------------------------------- */
@@ -48,7 +48,7 @@ clish_view_t *clish_shell__set_depth(clish_shell_t *this, unsigned int depth)
 
 	assert(this);
 	/* Check if target view is valid = is not NULL */
-	tmp = this->pwdv[depth]->view;
+	tmp = this->cwdv[depth]->view;
 	if (!tmp)
 		return NULL;
 	this->depth = depth;
