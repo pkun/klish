@@ -8,7 +8,6 @@
 
 #include "lub/string.h"
 #include "lub/list.h"
-#include "lub/bintree.h"
 #include "clish/plugin.h"
 #include "clish/view.h"
 

@@ -6,7 +6,6 @@
 
 #include "private.h"
 #include "clish/types.h"
-#include "lub/bintree.h"
 #include "lub/string.h"
 
 #include <assert.h>

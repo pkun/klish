@@ -2,14 +2,10 @@
 #define _clish_var_h
 
 #include "lub/types.h"
-#include "lub/bintree.h"
 #include "clish/action.h"
 
 typedef struct clish_var_s clish_var_t;
 
-int clish_var_bt_compare(const void *clientnode, const void *clientkey);
-void clish_var_bt_getkey(const void *clientnode, lub_bintree_key_t * key);
-size_t clish_var_bt_offset(void);
 clish_var_t *clish_var_new(const char *name);
 void clish_var_delete(void *instance);
 void clish_var_dump(const clish_var_t *instance);

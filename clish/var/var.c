@@ -19,9 +19,6 @@ static void clish_var_init(clish_var_t *this, const char *name)
 	this->value = NULL;
 	this->action = clish_action_new();
 	this->saved = NULL;
-
-	/* Be a good binary tree citizen */
-	lub_bintree_node_init(&this->bt_node);
 }
 
 /*--------------------------------------------------------- */
@@ -31,30 +28,6 @@ static void clish_var_fini(clish_var_t *this)
 	lub_string_free(this->value);
 	lub_string_free(this->saved);
 	clish_action_delete(this->action);
-}
-
-/*--------------------------------------------------------- */
-int clish_var_bt_compare(const void *clientnode, const void *clientkey)
-{
-	const clish_var_t *this = clientnode;
-	const char *key = clientkey;
-
-	return strcmp(this->name, key);
-}
-
-/*-------------------------------------------------------- */
-void clish_var_bt_getkey(const void *clientnode, lub_bintree_key_t * key)
-{
-	const clish_var_t *this = clientnode;
-
-	/* fill out the opaque key */
-	strcpy((char *)key, this->name);
-}
-
-/*--------------------------------------------------------- */
-size_t clish_var_bt_offset(void)
-{
-	return offsetof(clish_var_t, bt_node);
 }
 
 /*--------------------------------------------------------- */
