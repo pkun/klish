@@ -32,20 +32,20 @@ typedef enum {
 clish_view_t *clish_view_new(const char *name);
 int clish_view_compare(const void *clientnode, const void *clientkey);
 void clish_view_delete(void *instance);
-clish_command_t *clish_view_new_command(clish_view_t * instance,
+clish_command_t *clish_view_new_command(clish_view_t *instance,
 	const char *name, const char *text);
-clish_command_t *clish_view_find_command(clish_view_t * instance,
-	const char *name, bool_t inherit);
-const clish_command_t *clish_view_find_next_completion(clish_view_t * instance,
+clish_command_t *clish_view_find_command(clish_view_t *instance,
+	const char *name);
+const clish_command_t *clish_view_find_next_completion(clish_view_t *instance,
 	const char *iter_cmd, const char *line,
 	clish_nspace_visibility_e field, bool_t inherit);
-clish_command_t *clish_view_resolve_command(clish_view_t * instance,
-	const char *line, bool_t inherit);
-clish_command_t *clish_view_resolve_prefix(clish_view_t * instance,
-	const char *line, bool_t inherit);
-void clish_view_dump(clish_view_t * instance);
-void clish_view_insert_nspace(clish_view_t * instance, clish_nspace_t * nspace);
-void clish_view_clean_proxy(clish_view_t * instance);
+clish_command_t *clish_view_resolve_command(clish_view_t *instance,
+	const char *line);
+clish_command_t *clish_view_resolve_prefix(clish_view_t *instance,
+	const char *line);
+void clish_view_dump(clish_view_t *instance);
+void clish_view_insert_nspace(clish_view_t *instance, clish_nspace_t *nspace);
+void clish_view_clean_proxy(clish_view_t *instance);
 int clish_view_insert_hotkey(const clish_view_t *instance, const char *key, const char *cmd);
 const char *clish_view_find_hotkey(const clish_view_t *instance, int code);
 

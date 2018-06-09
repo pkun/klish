@@ -24,14 +24,14 @@ typedef enum {
 clish_nspace_t *clish_nspace_new(const char *view_name);
 
 void clish_nspace_delete(void *instance);
-const clish_command_t *clish_nspace_find_next_completion(clish_nspace_t *
-	instance, const char *iter_cmd, const char *line,
+const clish_command_t *clish_nspace_find_next_completion(clish_nspace_t *instance,
+	const char *iter_cmd, const char *line,
 	clish_nspace_visibility_e field);
-clish_command_t *clish_nspace_find_command(clish_nspace_t * instance, const char *name);
-void clish_nspace_dump(const clish_nspace_t * instance);
-clish_command_t * clish_nspace_create_prefix_cmd(clish_nspace_t * instance,
-	const char * name, const char * help);
-void clish_nspace_clean_proxy(clish_nspace_t * instance);
+clish_command_t *clish_nspace_resolve_prefix(clish_nspace_t *instance, const char *name);
+void clish_nspace_dump(const clish_nspace_t *instance);
+clish_command_t * clish_nspace_create_prefix_cmd(clish_nspace_t *instance,
+	const char *name, const char *help);
+void clish_nspace_clean_proxy(clish_nspace_t *instance);
 
 _CLISH_SET(nspace, bool_t, help);
 _CLISH_GET(nspace, bool_t, help);

@@ -286,7 +286,7 @@ int clish_shell_prepare(clish_shell_t *this)
 				if (!aview /* Removed or broken VIEW */
 					||
 					/* Removed or broken referenced COMMAND */
-					!(cmdref = clish_view_find_command(aview, clish_command__get_alias(cmd), BOOL_FALSE))
+					!(cmdref = clish_view_find_command(aview, clish_command__get_alias(cmd)))
 					) {
 #ifdef DEBUG
 					fprintf(stderr, "Warning: Remove unresolved link \"%s\" from \"%s\" VIEW\n",

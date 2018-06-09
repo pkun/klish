@@ -5,6 +5,7 @@
  */
 #include "private.h"
 #include "lub/string.h"
+#include "lub/ctype.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -170,7 +171,7 @@ static const char *clish_nspace_after_prefix(const regex_t *prefix_regex,
 }
 
 /*--------------------------------------------------------- */
-clish_command_t *clish_nspace_find_command(clish_nspace_t * this, const char *name)
+clish_command_t *clish_nspace_resolve_prefix(clish_nspace_t *this, const char *name)
 {
 	clish_command_t *cmd = NULL, *retval = NULL;
 	clish_view_t *view = clish_nspace__get_view(this);
@@ -178,18 +179,18 @@ clish_command_t *clish_nspace_find_command(clish_nspace_t * this, const char *na
 	char *real_prefix = NULL;
 
 	if (!clish_nspace__get_prefix(this))
-		return clish_view_find_command(view, name, this->inherit);
+		return clish_view_resolve_prefix(view, name);
 
 	if (!(in_line = clish_nspace_after_prefix(
 		clish_nspace__get_prefix_regex(this), name, &real_prefix)))
 		return NULL;
 
 	/* If prefix is followed by space */
-	if (in_line[0] == ' ')
+	while (lub_ctype_isspace(in_line[0]))
 		in_line++;
 
 	if (in_line[0] != '\0') {
-		cmd = clish_view_find_command(view, in_line, this->inherit);
+		cmd = clish_view_resolve_prefix(view, in_line);
 		if (!cmd) {
 			lub_string_free(real_prefix);
 			return NULL;

@@ -37,13 +37,17 @@ void lub_list_del(lub_list_t *list, lub_list_node_t *node);
 unsigned int lub_list_len(lub_list_t *list);
 lub_list_node_t *lub_list_match_node(lub_list_t *list,
 	lub_list_match_fn matchFn, const void *userkey,
-	lub_list_node_t **saveptr);
+	lub_list_node_t **saveptr, bool_t reverse);
 void *lub_list_find_node(lub_list_t *list,
+	lub_list_match_fn matchFn, const void *userkey);
+void *lub_list_rfind_node(lub_list_t *list,
 	lub_list_match_fn matchFn, const void *userkey);
 void *lub_list_match(lub_list_t *list,
 	lub_list_match_fn matchFn, const void *userkey,
-	lub_list_node_t **saveptr);
+	lub_list_node_t **saveptr, bool_t reverse);
 void *lub_list_find(lub_list_t *list,
+	lub_list_match_fn matchFn, const void *userkey);
+void *lub_list_rfind(lub_list_t *list,
 	lub_list_match_fn matchFn, const void *userkey);
 
 _END_C_DECL

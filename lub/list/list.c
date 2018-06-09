@@ -231,7 +231,7 @@ inline void lub_list_node_copy(lub_list_node_t *dst, lub_list_node_t *src)
 /*--------------------------------------------------------- */
 lub_list_node_t *lub_list_match_node(lub_list_t *this,
 	lub_list_match_fn matchFn, const void *userkey,
-	lub_list_node_t **saveptr)
+	lub_list_node_t **saveptr, bool_t reverse)
 {
 	lub_list_node_t *iter = NULL;
 	if (!this || !matchFn || !this->head)
@@ -239,18 +239,23 @@ lub_list_node_t *lub_list_match_node(lub_list_t *this,
 	if (saveptr)
 		iter = *saveptr;
 	if (!iter)
-		iter = this->head;
+		iter = reverse ? this->tail : this->head;
 	while (iter) {
 		int res;
 		lub_list_node_t *node = iter;
-		iter = lub_list_node__get_next(iter);
+		iter = reverse ? lub_list_node__get_prev(iter) : lub_list_node__get_next(iter);
 		if (saveptr)
 			*saveptr = iter;
 		res = matchFn(userkey, lub_list_node__get_data(node));
 		if (!res)
 			return node;
-		if (res < 0) // No chances to find match
-			return NULL;
+		if (reverse) {
+			if (res > 0) // No chances to find match
+				return NULL;
+		} else {
+			if (res < 0) // No chances to find match
+				return NULL;
+		}
 	}
 
 	return NULL;
@@ -260,15 +265,23 @@ lub_list_node_t *lub_list_match_node(lub_list_t *this,
 void *lub_list_find_node(lub_list_t *this,
 	lub_list_match_fn matchFn, const void *userkey)
 {
-	return lub_list_match_node(this, matchFn, userkey, NULL);
+	return lub_list_match_node(this, matchFn, userkey, NULL, BOOL_FALSE);
+}
+
+/*--------------------------------------------------------- */
+void *lub_list_rfind_node(lub_list_t *this,
+	lub_list_match_fn matchFn, const void *userkey)
+{
+	return lub_list_match_node(this, matchFn, userkey, NULL, BOOL_TRUE);
 }
 
 /*--------------------------------------------------------- */
 void *lub_list_match(lub_list_t *this,
 	lub_list_match_fn matchFn, const void *userkey,
-	lub_list_node_t **saveptr)
+	lub_list_node_t **saveptr, bool_t reverse)
 {
-	lub_list_node_t *res = lub_list_match_node(this, matchFn, userkey, saveptr);
+	lub_list_node_t *res = lub_list_match_node(this, matchFn,
+		userkey, saveptr, reverse);
 	if (!res)
 		return NULL;
 	return lub_list_node__get_data(res);
@@ -278,7 +291,14 @@ void *lub_list_match(lub_list_t *this,
 void *lub_list_find(lub_list_t *this,
 	lub_list_match_fn matchFn, const void *userkey)
 {
-	return lub_list_match(this, matchFn, userkey, NULL);
+	return lub_list_match(this, matchFn, userkey, NULL, BOOL_FALSE);
+}
+
+/*--------------------------------------------------------- */
+void *lub_list_rfind(lub_list_t *this,
+	lub_list_match_fn matchFn, const void *userkey)
+{
+	return lub_list_match(this, matchFn, userkey, NULL, BOOL_TRUE);
 }
 
 /*--------------------------------------------------------- */

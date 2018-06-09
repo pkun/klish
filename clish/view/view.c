@@ -101,6 +101,19 @@ clish_command_t *clish_view_new_command(clish_view_t *this,
 }
 
 /*--------------------------------------------------------- */
+static int cmd_resolve(const void *key, const void *data)
+{
+	const char *line = (const char *)key;
+	const clish_command_t *d = (const clish_command_t *)data;
+	const char *name = clish_command__get_name(d);
+	size_t eq = lub_string_equal_part(line, name, BOOL_FALSE);
+	if (eq == strlen(name))
+		if ((line[eq] == '\0') || lub_ctype_isspace(line[eq]))
+			return 0;
+	return lub_string_nocasecmp(line, name);
+}
+
+/*--------------------------------------------------------- */
 /* This method identifies the command (if any) which provides
  * the longest match with the specified line of text.
  *
@@ -108,7 +121,36 @@ clish_command_t *clish_view_new_command(clish_view_t *this,
  *
  * this - the view instance upon which to operate
  * line - the command line to analyse 
+ *
+ * Begin to search from tail of sorted list of cmds. So
+ * the first match will be the longest command.
  */
+clish_command_t *clish_view_resolve_prefix(clish_view_t *this,
+	const char *line)
+{
+	lub_list_node_t *iter;
+	clish_command_t *res = NULL;
+
+	res = lub_list_rfind(this->cmds, cmd_resolve, line);
+
+	/* Iterate elements. It's important to iterate
+	 * items starting from tail because the next
+	 * NAMESPACE has higher priority than previous one
+	 * in a case then the both NAMESPACEs have the
+	 * commands with the same name.
+	 */
+	for (iter = lub_list__get_tail(this->nspaces);
+		iter; iter = lub_list_node__get_prev(iter)) {
+		clish_nspace_t *nspace = (clish_nspace_t *)lub_list_node__get_data(iter);
+		clish_command_t *cmd = clish_nspace_resolve_prefix(nspace, line);
+		/* Choose the longest match */
+		res = clish_command_choose_longest(res, cmd);
+	}
+
+	return res;
+}
+
+#if 0 // WORK
 clish_command_t *clish_view_resolve_prefix(clish_view_t *this,
 	const char *line, bool_t inherit)
 {
@@ -143,11 +185,15 @@ clish_command_t *clish_view_resolve_prefix(clish_view_t *this,
 	return result;
 }
 
+
+
+#endif
+
 /*--------------------------------------------------------- */
 clish_command_t *clish_view_resolve_command(clish_view_t *this,
-	const char *line, bool_t inherit)
+	const char *line)
 {
-	clish_command_t *result = clish_view_resolve_prefix(this, line, inherit);
+	clish_command_t *result = clish_view_resolve_prefix(this, line);
 
 	if (result) {
 		clish_action_t *action = clish_command__get_action(result);
@@ -168,40 +214,16 @@ clish_command_t *clish_view_resolve_command(clish_view_t *this,
 }
 
 /*--------------------------------------------------------- */
+/* Search for local (without NAMESPACEs) command by name */
 clish_command_t *clish_view_find_command(clish_view_t *this,
-	const char *name, bool_t inherit)
+	const char *name)
 {
-	clish_command_t *result = NULL;
-
-	/* Search the current view */
-	result = lub_list_find(this->cmds, clish_command_fn_find_by_name, name);
-
-	if (inherit) {
-		lub_list_node_t *iter;
-		clish_command_t *cmd;
-		clish_nspace_t *nspace;
-
-		/* Iterate elements. It's important to iterate
-		 * items starting from tail because the next
-		 * NAMESPACE has higher priority than previous one
-		 * in a case then the both NAMESPACEs have the
-		 * commands with the same name.
-		 */
-		for(iter = lub_list__get_tail(this->nspaces);
-			iter; iter = lub_list_node__get_prev(iter)) {
-			nspace = (clish_nspace_t *)lub_list_node__get_data(iter);
-			cmd = clish_nspace_find_command(nspace, name);
-			/* Choose the longest match */
-			result = clish_command_choose_longest(result, cmd);
-		}
-	}
-
-	return result;
+	return lub_list_find(this->cmds, clish_command_fn_find_by_name, name);
 }
 
 /*--------------------------------------------------------- */
-static const clish_command_t *find_next_completion(clish_view_t * this,
-		const char *iter_cmd, const char *line)
+static const clish_command_t *find_next_completion(clish_view_t *this,
+	const char *iter_cmd, const char *line)
 {
 #if 0 // WORK
 	clish_command_t *cmd;

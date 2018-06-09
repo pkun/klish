@@ -149,11 +149,11 @@ int clish_command_help(const clish_command_t *this)
 }
 
 /*--------------------------------------------------------- */
-clish_command_t *clish_command_choose_longest(clish_command_t * cmd1,
-	clish_command_t * cmd2)
+clish_command_t *clish_command_choose_longest(clish_command_t *cmd1,
+	clish_command_t *cmd2)
 {
-	unsigned len1 = (cmd1 ? strlen(clish_command__get_name(cmd1)) : 0);
-	unsigned len2 = (cmd2 ? strlen(clish_command__get_name(cmd2)) : 0);
+	unsigned int len1 = (cmd1 ? strlen(clish_command__get_name(cmd1)) : 0);
+	unsigned int len2 = (cmd2 ? strlen(clish_command__get_name(cmd2)) : 0);
 
 	if (len2 < len1) {
 		return cmd1;

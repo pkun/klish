@@ -22,25 +22,9 @@ const clish_command_t *clish_shell_resolve_command(const clish_shell_t * this,
 	clish_command_t *cmd, *result;
 
 	/* Search the current view */
-	result = clish_view_resolve_command(clish_shell__get_view(this), line, BOOL_TRUE);
+	result = clish_view_resolve_command(clish_shell__get_view(this), line);
 	/* Search the global view */
-	cmd = clish_view_resolve_command(this->global, line, BOOL_TRUE);
-
-	result = clish_command_choose_longest(result, cmd);
-
-	return result;
-}
-
-/*--------------------------------------------------------- */
-const clish_command_t *clish_shell_resolve_prefix(const clish_shell_t * this,
-	const char *line)
-{
-	clish_command_t *cmd, *result;
-
-	/* Search the current view */
-	result = clish_view_resolve_prefix(clish_shell__get_view(this), line, BOOL_TRUE);
-	/* Search the global view */
-	cmd = clish_view_resolve_prefix(this->global, line, BOOL_TRUE);
+	cmd = clish_view_resolve_command(this->global, line);
 
 	result = clish_command_choose_longest(result, cmd);
 
