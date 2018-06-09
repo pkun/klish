@@ -150,45 +150,6 @@ clish_command_t *clish_view_resolve_prefix(clish_view_t *this,
 	return res;
 }
 
-#if 0 // WORK
-clish_command_t *clish_view_resolve_prefix(clish_view_t *this,
-	const char *line, bool_t inherit)
-{
-	clish_command_t *result = NULL, *cmd;
-	char *buffer = NULL;
-	lub_argv_t *argv;
-	unsigned int i;
-
-	/* create a vector of arguments */
-	argv = lub_argv_new(line, 0);
-
-	for (i = 0; i < lub_argv__get_count(argv); i++) {
-		/* set our buffer to be that of the first "i" arguments  */
-		lub_string_cat(&buffer, lub_argv__get_arg(argv, i));
-
-		/* set the result to the longest match */
-		cmd = clish_view_find_command(this, buffer, inherit);
-
-		/* job done */
-		if (!cmd)
-			break;
-		result = cmd;
-
-		/* ready for the next word */
-		lub_string_cat(&buffer, " ");
-	}
-
-	/* free up our dynamic storage */
-	lub_string_free(buffer);
-	lub_argv_delete(argv);
-
-	return result;
-}
-
-
-
-#endif
-
 /*--------------------------------------------------------- */
 clish_command_t *clish_view_resolve_command(clish_view_t *this,
 	const char *line)
