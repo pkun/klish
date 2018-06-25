@@ -42,7 +42,7 @@ const clish_command_t *clish_view_find_next_completion(clish_view_t *instance,
 clish_command_t *clish_view_resolve_command(clish_view_t *instance,
 	const char *line);
 clish_command_t *clish_view_resolve_prefix(clish_view_t *instance,
-	const char *line);
+	const char *line, bool_t inherit);
 void clish_view_dump(clish_view_t *instance);
 void clish_view_insert_nspace(clish_view_t *instance, clish_nspace_t *nspace);
 void clish_view_clean_proxy(clish_view_t *instance);

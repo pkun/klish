@@ -179,7 +179,7 @@ clish_command_t *clish_nspace_resolve_prefix(clish_nspace_t *this, const char *n
 	char *real_prefix = NULL;
 
 	if (!clish_nspace__get_prefix(this))
-		return clish_view_resolve_prefix(view, name);
+		return clish_view_resolve_prefix(view, name, this->inherit);
 
 	if (!(in_line = clish_nspace_after_prefix(
 		clish_nspace__get_prefix_regex(this), name, &real_prefix)))
@@ -190,7 +190,7 @@ clish_command_t *clish_nspace_resolve_prefix(clish_nspace_t *this, const char *n
 		in_line++;
 
 	if (in_line[0] != '\0') {
-		cmd = clish_view_resolve_prefix(view, in_line);
+		cmd = clish_view_resolve_prefix(view, in_line, this->inherit);
 		if (!cmd) {
 			lub_string_free(real_prefix);
 			return NULL;

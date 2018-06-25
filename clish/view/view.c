@@ -126,7 +126,7 @@ static int cmd_resolve(const void *key, const void *data)
  * the first match will be the longest command.
  */
 clish_command_t *clish_view_resolve_prefix(clish_view_t *this,
-	const char *line)
+	const char *line, bool_t inherit)
 {
 	lub_list_node_t *iter;
 	clish_command_t *res = NULL;
@@ -139,6 +139,8 @@ clish_command_t *clish_view_resolve_prefix(clish_view_t *this,
 	 * in a case then the both NAMESPACEs have the
 	 * commands with the same name.
 	 */
+	if (!inherit)
+		return res;
 	for (iter = lub_list__get_tail(this->nspaces);
 		iter; iter = lub_list_node__get_prev(iter)) {
 		clish_nspace_t *nspace = (clish_nspace_t *)lub_list_node__get_data(iter);
@@ -154,7 +156,7 @@ clish_command_t *clish_view_resolve_prefix(clish_view_t *this,
 clish_command_t *clish_view_resolve_command(clish_view_t *this,
 	const char *line)
 {
-	clish_command_t *result = clish_view_resolve_prefix(this, line);
+	clish_command_t *result = clish_view_resolve_prefix(this, line, BOOL_TRUE);
 
 	if (result) {
 		clish_action_t *action = clish_command__get_action(result);
