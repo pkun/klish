@@ -140,11 +140,8 @@ char *clish_shell__get_pwd_full(const clish_shell_t * this, unsigned int depth)
 	for (i = 1; i <= depth; i++) {
 		const char *str =
 			clish_shell__get_pwd_line(this, i);
-		/* Cannot get full path */
-		if (!str) {
-			lub_string_free(pwd);
-			return NULL;
-		}
+		if (!str)
+			continue;
 		if (pwd)
 			lub_string_cat(&pwd, " ");
 		lub_string_cat(&pwd, "\"");
