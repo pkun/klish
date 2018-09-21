@@ -56,9 +56,12 @@ unsigned int clish_shell__get_depth(const clish_shell_t *this)
 /*--------------------------------------------------------- */
 clish_view_t *clish_shell__set_depth(clish_shell_t *this, unsigned int depth)
 {
-	clish_view_t *tmp;
+	clish_view_t *tmp = NULL;
 
 	assert(this);
+	/* Overflow check */
+	if (depth >= this->pwdc)
+		return NULL;
 	/* Check if target view is valid = is not NULL */
 	tmp = this->pwdv[depth]->view;
 	if (!tmp)
