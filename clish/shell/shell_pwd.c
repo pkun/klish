@@ -52,11 +52,6 @@ void clish_shell__set_pwd(clish_shell_t *this,
 	clish_shell_pwd_t *newpwd;
 	const clish_command_t *full_cmd = clish_context__get_cmd(context);
 
-	/* Create new element */
-	newpwd = malloc(sizeof(*newpwd));
-	assert(newpwd);
-	clish_shell__init_pwd(newpwd);
-
 	/* Resize the pwd vector */
 	if (index >= this->pwdc) {
 		new_size = (index + 1) * sizeof(clish_shell_pwd_t *);
@@ -73,6 +68,10 @@ void clish_shell__set_pwd(clish_shell_t *this,
 		this->pwdc = index + 1;
 	}
 
+	/* Create new element */
+	newpwd = malloc(sizeof(*newpwd));
+	assert(newpwd);
+	clish_shell__init_pwd(newpwd);
 	/* Fill the new pwd entry */
 	newpwd->line = line ? lub_string_dup(line) : NULL;
 	newpwd->view = view;
@@ -92,6 +91,16 @@ void clish_shell__set_pwd(clish_shell_t *this,
 	clish_shell__fini_pwd(this->pwdv[index]);
 	free(this->pwdv[index]);
 	this->pwdv[index] = newpwd;
+
+	/* Cleanup intermadiate levels in a case of a long depth jump.
+	   For example jump from depth 0 to depth 3. The levels 1 and
+	   two must be cleaned up.
+	*/
+	for (i = this->depth + 1; i < index; i++) {
+		clish_shell__fini_pwd(this->pwdv[i]);
+		clish_shell__init_pwd(this->pwdv[i]);
+	}
+
 	this->depth = index;
 }
 
