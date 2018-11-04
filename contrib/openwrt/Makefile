@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=klish
-PKG_VERSION:=2.0.4
+PKG_VERSION:=2.1.4
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=http://libcode.org/attachments/download/55/
-PKG_MD5SUM:=f71d9948705da50094d7b7129fe39275
+PKG_MD5SUM:=57a0b39b6e0a450007ee9e0b2ff50f03
 
 PKG_INSTALL:=1
 
