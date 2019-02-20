@@ -151,7 +151,7 @@ clish_ptype_method_e clish_ptype_method_resolve(const char *name)
 {
 	clish_ptype_method_e result = CLISH_PTYPE_REGEXP;
 	if (NULL != name) {
-		unsigned i;
+		unsigned int i;
 		for (i = 0; i < CLISH_PTYPE_SELECT + 1; i++) {
 			if (0 == strcmp(name, method_names[i])) {
 				result = (clish_ptype_method_e) i;
@@ -205,7 +205,7 @@ void clish_ptype_word_generator(clish_ptype_t * this,
 	lub_argv_t *matches, const char *text)
 {
 	char *result = NULL;
-	unsigned i = 0;
+	unsigned int i = 0;
 
 	/* Another ptypes has no completions */
 	if (this->method != CLISH_PTYPE_SELECT)
@@ -229,7 +229,7 @@ void clish_ptype_word_generator(clish_ptype_t * this,
 }
 
 /*--------------------------------------------------------- */
-static char *clish_ptype_validate_or_translate(const clish_ptype_t * this,
+static char *clish_ptype_validate_or_translate(clish_ptype_t *this,
 	const char *text, bool_t translate)
 {
 	char *result = lub_string_dup(text);
@@ -265,22 +265,26 @@ static char *clish_ptype_validate_or_translate(const clish_ptype_t * this,
 	}
 	/*----------------------------------------- */
 	}
-	/*
-	 * now validate according the specified method 
-	 */
+
+	/* Now validate according the specified method */
 	switch (this->method) {
 	/*------------------------------------------------- */
 	case CLISH_PTYPE_REGEXP:
-		/* test the regular expression against the string */
-		/*lint -e64 Type mismatch (arg. no. 4) */
-		/*
-		 * lint seems to equate regmatch_t[] as being of type regmatch_t !
-		 */
-		if (0 != regexec(&this->u.regexp, result, 0, NULL, 0)) {
+		/* Lazy compilation of the regular expression */
+		if (!this->u.regex.is_compiled) {
+			if (regcomp(&this->u.regex.re, this->pattern,
+				REG_NOSUB | REG_EXTENDED)) {
+				lub_string_free(result);
+				result = NULL;
+				break;
+			}
+			this->u.regex.is_compiled = BOOL_TRUE;
+		}
+
+		if (regexec(&this->u.regex.re, result, 0, NULL, 0)) {
 			lub_string_free(result);
 			result = NULL;
 		}
-		/*lint +e64 */
 		break;
 	/*------------------------------------------------- */
 	case CLISH_PTYPE_INTEGER:
@@ -401,13 +405,13 @@ static void clish_ptype_init(clish_ptype_t * this,
 }
 
 /*--------------------------------------------------------- */
-char *clish_ptype_validate(const clish_ptype_t * this, const char *text)
+char *clish_ptype_validate(clish_ptype_t * this, const char *text)
 {
 	return clish_ptype_validate_or_translate(this, text, BOOL_FALSE);
 }
 
 /*--------------------------------------------------------- */
-char *clish_ptype_translate(const clish_ptype_t * this, const char *text)
+char *clish_ptype_translate(clish_ptype_t * this, const char *text)
 {
 	return clish_ptype_validate_or_translate(this, text, BOOL_TRUE);
 }
@@ -430,7 +434,8 @@ static void clish_ptype_fini(clish_ptype_t * this)
 	if (this->pattern) {
 		switch (this->method) {
 		case CLISH_PTYPE_REGEXP:
-			regfree(&this->u.regexp);
+			if (this->u.regex.is_compiled)
+				regfree(&this->u.regex.re);
 			break;
 		case CLISH_PTYPE_INTEGER:
 		case CLISH_PTYPE_UNSIGNEDINTEGER:
@@ -482,17 +487,11 @@ clish_ptype__set_pattern(clish_ptype_t * this,
 	/*------------------------------------------------- */
 	case CLISH_PTYPE_REGEXP:
 	{
-		int result;
-
-		/* only the expression is allowed */
 		lub_string_cat(&this->pattern, "^");
 		lub_string_cat(&this->pattern, pattern);
 		lub_string_cat(&this->pattern, "$");
-
-		/* compile the regular expression for later use */
-		result = regcomp(&this->u.regexp, this->pattern,
-			REG_NOSUB | REG_EXTENDED);
-		assert(0 == result);
+		/* Use lazy mechanism to compile regular expressions */
+		this->u.regex.is_compiled = BOOL_FALSE;
 		break;
 	}
 	/*------------------------------------------------- */
