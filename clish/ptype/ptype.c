@@ -40,8 +40,8 @@ static void clish_ptype_init(clish_ptype_t * this,
 		/* set the pattern for this type */
 		clish_ptype__set_pattern(this, pattern, method);
 	} else {
-		/* The method is regexp by default */
-		this->method = CLISH_PTYPE_METHOD_REGEXP;
+		// Only method="code" doesn't need a pattern
+		this->method = CLISH_PTYPE_METHOD_CODE;
 	}
 	
 	/* set the help text for this type */
@@ -63,6 +63,8 @@ static void clish_ptype_fini(clish_ptype_t * this)
 			break;
 		case CLISH_PTYPE_METHOD_SELECT:
 			lub_argv_delete(this->u.select.items);
+			break;
+		case CLISH_PTYPE_METHOD_CODE:
 			break;
 		default:
 			break;
