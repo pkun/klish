@@ -90,6 +90,7 @@ _CLISH_GET_STR(ptype, text);
 _CLISH_SET_ONCE(ptype, clish_ptype_preprocess_e, preprocess);
 _CLISH_GET_STR(ptype, range);
 _CLISH_GET(ptype, clish_action_t *, action);
+_CLISH_GET(ptype, clish_ptype_method_e, method);
 
 void clish_ptype__set_pattern(clish_ptype_t * instance,
 	const char *pattern, clish_ptype_method_e method);

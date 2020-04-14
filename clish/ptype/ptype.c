@@ -190,6 +190,10 @@ static void clish_ptype__set_range(clish_ptype_t * this)
 		break;
 	}
 	/*------------------------------------------------- */
+	case CLISH_PTYPE_METHOD_CODE:
+		// Nothing to do
+		break;
+	/*------------------------------------------------- */
 	default:
 		break;
 	/*------------------------------------------------- */
@@ -453,6 +457,7 @@ CLISH_GET_STR(ptype, text);
 CLISH_SET_ONCE(ptype, clish_ptype_preprocess_e, preprocess);
 CLISH_GET_STR(ptype, range);
 CLISH_GET(ptype, clish_action_t *, action);
+CLISH_GET(ptype, clish_ptype_method_e, method);
 
 /*--------------------------------------------------------- */
 void clish_ptype__set_pattern(clish_ptype_t * this,
@@ -498,6 +503,10 @@ void clish_ptype__set_pattern(clish_ptype_t * this,
 		this->pattern = lub_string_dup(pattern);
 		/* store a vector of item descriptors */
 		this->u.select.items = lub_argv_new(this->pattern, 0);
+		break;
+	/*------------------------------------------------- */
+	case CLISH_PTYPE_METHOD_CODE:
+		// Nothing to do
 		break;
 	/*------------------------------------------------- */
 	default:

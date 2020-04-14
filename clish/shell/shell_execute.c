@@ -434,6 +434,7 @@ char *clish_shell_mkfifo(clish_shell_t * this, char *name, size_t n)
 /*----------------------------------------------------------- */
 int clish_shell_rmfifo(clish_shell_t * this, const char *name)
 {
+	this = this; // Happy compiler
 	return unlink(name);
 }
 

@@ -9,6 +9,72 @@
 #include "lub/system.h"
 #include "private.h"
 
+
+/*----------------------------------------------------------- */
+/* The standard clish_param_validate() is not enough when PTYPE can
+ * contain ACTION. So we need context etc. to really validate param.
+ */
+static char *clish_shell_param_validate(const clish_param_t *param, const char *text,
+	clish_context_t *context)
+{
+	clish_ptype_t *ptype = NULL;
+	clish_ptype_method_e method = CLISH_PTYPE_METHOD_MAX;
+	char *out = NULL;
+	clish_context_t ctx = {};
+	clish_pargv_t *pargv = NULL;
+	clish_param_t *value_param = NULL;
+	int retval = 0;
+
+	assert(param);
+	assert(context);
+	if (!param || !context)
+		return NULL;
+
+	ptype = clish_param__get_ptype(param);
+	assert(ptype);
+	if (!ptype)
+		return NULL;
+	method = clish_ptype__get_method(ptype);
+
+	// Check is it common non-code PTYPE
+	if (method != CLISH_PTYPE_METHOD_CODE)
+		return clish_param_validate(param, text);
+
+	// Prepare dummy pargv structure to provide 'value' parameter to the
+	// ACTION script. This parameter contain current value to check.
+	value_param = clish_param_new("value", "Dummy param for PTYPE's ACTION",
+		clish_param__get_ptype_name(param));
+	assert(value_param);
+	if (!value_param)
+		return NULL;
+	clish_param__set_ptype(value_param, ptype);
+	pargv = clish_pargv_new(); // Dummy pargv
+	assert(pargv);
+	if (!pargv)
+		return NULL;
+	clish_pargv_insert(pargv, value_param, text);
+
+	// Prepare context for ACTION execution
+	clish_context_dup(&ctx, context);
+	clish_context__set_action(&ctx, clish_ptype__get_action(ptype));
+	clish_context__set_pargv(&ctx, pargv);
+
+	// Try to execute ACTION
+	retval = clish_shell_exec_action(&ctx, &out);
+	// Cleanup dummy structures
+	clish_pargv_delete(pargv);
+	clish_param_delete(value_param);
+
+	if (retval) {
+		lub_string_free(out);
+		return NULL; // Fail on bad ACTION retval
+	}
+	if (out)
+		return out;
+
+	return lub_string_dup(text);
+}
+
 /*----------------------------------------------------------- */
 clish_pargv_status_e clish_shell_parse(
 	clish_shell_t *this, const char *line,
@@ -181,7 +247,9 @@ clish_pargv_status_e clish_shell_parse_pargv(clish_pargv_t *pargv,
 					if (!line_test(cparam, context))
 						continue;
 					if ((validated = arg ?
-						clish_param_validate(cparam, arg) : NULL)) {
+						clish_shell_param_validate(
+							cparam, arg, context) :
+							NULL)) {
 						rec_paramv = clish_param__get_paramv(cparam);
 						rec_paramc = clish_param__get_param_count(cparam);
 						break;
@@ -189,7 +257,8 @@ clish_pargv_status_e clish_shell_parse_pargv(clish_pargv_t *pargv,
 				}
 			} else {
 				validated = arg ?
-					clish_param_validate(param, arg) : NULL;
+					clish_shell_param_validate(
+						param, arg, context) : NULL;
 			}
 
 			if (validated) {
