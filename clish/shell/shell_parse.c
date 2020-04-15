@@ -69,8 +69,11 @@ static char *clish_shell_param_validate(const clish_param_t *param, const char *
 		lub_string_free(out);
 		return NULL; // Fail on bad ACTION retval
 	}
-	if (out)
-		return out;
+	if (out) {
+		if (*out != '\0') // Non-empty str is transformation
+			return out;
+		lub_string_free(out);
+	}
 
 	return lub_string_dup(text);
 }
