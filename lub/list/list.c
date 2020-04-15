@@ -57,6 +57,9 @@ void lub_list_free_all(lub_list_t *this)
 /*--------------------------------------------------------- */
 inline lub_list_node_t *lub_list__get_head(lub_list_t *this)
 {
+	assert(this);
+	if (!this)
+		return NULL;
 	return this->head;
 }
 
@@ -164,6 +167,7 @@ static lub_list_node_t *lub_list_add_generic(lub_list_t *this, void *data,
 		int res = this->compareFn(node->data, iter->data);
 		if (uniq && (res == 0)) {
 			this->len--; // Revert previous increment
+			lub_list_node_free(node);
 			return (find ? iter : NULL);
 		}
 		if (res >= 0) {
@@ -218,6 +222,8 @@ void lub_list_del(lub_list_t *this, lub_list_node_t *node)
 		node->next->prev = node->prev;
 	else
 		this->tail = node->prev;
+	node->prev = NULL;
+	node->next = NULL;
 
 	this->len--;
 }

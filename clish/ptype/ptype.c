@@ -229,7 +229,6 @@ clish_ptype_method_e clish_ptype_method_resolve(const char *name)
 		if (!strcmp(name, method_names[i]))
 			break;
 	}
-
 	return (clish_ptype_method_e)i;
 }
 
