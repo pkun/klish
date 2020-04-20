@@ -146,7 +146,6 @@ CLISH_GET_STR(param, defval);
 CLISH_SET_STR_ONCE(param, test);
 CLISH_GET_STR(param, test);
 CLISH_SET_STR_ONCE(param, completion);
-CLISH_GET_STR(param, completion);
 CLISH_SET(param, clish_param_mode_e, mode);
 CLISH_GET(param, clish_param_mode_e, mode);
 CLISH_GET(param, clish_paramv_t *, paramv);
@@ -186,4 +185,17 @@ _CLISH_GET(param, unsigned int, param_count)
 {
 	assert(inst);
 	return clish_paramv__get_count(inst->paramv);
+}
+
+/*--------------------------------------------------------- */
+_CLISH_GET_STR(param, completion)
+{
+	assert(inst);
+	if (inst->completion)
+		return inst->completion;
+	// If param has no 'completion' field then get completion from ptype
+	if (inst->ptype)
+		return clish_ptype__get_completion(inst->ptype);
+
+	return NULL;
 }

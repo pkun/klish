@@ -87,6 +87,8 @@ void clish_ptype_dump(clish_ptype_t * instance);
 _CLISH_GET_STR(ptype, name);
 _CLISH_SET_STR_ONCE(ptype, text);
 _CLISH_GET_STR(ptype, text);
+_CLISH_SET_STR_ONCE(ptype, completion);
+_CLISH_GET_STR(ptype, completion);
 _CLISH_SET_ONCE(ptype, clish_ptype_preprocess_e, preprocess);
 _CLISH_GET_STR(ptype, range);
 _CLISH_GET(ptype, clish_action_t *, action);

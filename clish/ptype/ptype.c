@@ -31,6 +31,7 @@ static void clish_ptype_init(clish_ptype_t * this,
 	assert(name);
 	this->name = lub_string_dup(name);
 	this->text = NULL;
+	this->completion = NULL;
 	this->pattern = NULL;
 	this->preprocess = preprocess;
 	this->range = NULL;
@@ -79,6 +80,7 @@ static void clish_ptype_fini(clish_ptype_t * this)
 	lub_string_free(this->text);
 	lub_string_free(this->pattern);
 	lub_string_free(this->range);
+	lub_string_free(this->completion);
 	clish_action_delete(this->action);
 }
 
@@ -457,6 +459,8 @@ char *clish_ptype_translate(clish_ptype_t * this, const char *text)
 CLISH_GET_STR(ptype, name);
 CLISH_SET_STR_ONCE(ptype, text);
 CLISH_GET_STR(ptype, text);
+CLISH_SET_STR_ONCE(ptype, completion);
+CLISH_GET_STR(ptype, completion);
 CLISH_SET_ONCE(ptype, clish_ptype_preprocess_e, preprocess);
 CLISH_GET_STR(ptype, range);
 CLISH_GET(ptype, clish_action_t *, action);

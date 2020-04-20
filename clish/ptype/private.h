@@ -29,6 +29,7 @@ struct clish_ptype_s {
 	char *text;
 	char *pattern;
 	char *range;
+	char *completion; // Default completion for PARAMs of this PTYPE
 	clish_ptype_method_e method;
 	clish_ptype_preprocess_e preprocess;
 	unsigned int last_name; /* Index used for auto-completion */

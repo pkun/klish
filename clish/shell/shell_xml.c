@@ -382,6 +382,7 @@ static int process_ptype(clish_shell_t *shell, clish_xmlnode_t *element,
 	char *pattern = clish_xmlnode_fetch_attr(element, "pattern");
 	char *method_name = clish_xmlnode_fetch_attr(element, "method");
 	char *preprocess_name =	clish_xmlnode_fetch_attr(element, "preprocess");
+	char *completion = clish_xmlnode_fetch_attr(element, "completion");
 
 	/* Check syntax */
 	if (!name) {
@@ -403,6 +404,9 @@ static int process_ptype(clish_shell_t *shell, clish_xmlnode_t *element,
 	ptype = clish_shell_find_create_ptype(shell,
 		name, help, pattern, method, preprocess);
 
+	if (completion)
+		clish_ptype__set_completion(ptype, completion);
+
 	res = process_children(shell, element, ptype);
 error:
 	clish_xml_release(name);
@@ -410,6 +414,7 @@ error:
 	clish_xml_release(pattern);
 	clish_xml_release(method_name);
 	clish_xml_release(preprocess_name);
+	clish_xml_release(completion);
 
 	parent = parent; /* Happy compiler */
 

@@ -109,6 +109,11 @@
 *
 *	tolower - before validation convert to lowercase.
 *
+* completion - An optional field to define PTYPE completion. You can consider
+*	it as a default completion for the PARAM that uses this PTYPE. If PARAM
+*	has its own completion then PARAM's completion will be used. Else the
+*	PTYPE's completion will be used for PARAM.
+*
 ********************************************************
 -->
 	<xs:simpleType name="ptype_method_e">
@@ -139,6 +144,7 @@
 		<xs:attribute name="pattern" type="xs:string"/>
 		<xs:attribute name="method" type="ptype_method_e" use="optional" default="regexp"/>
 		<xs:attribute name="preprocess" type="ptype_preprocess_e" use="optional" default="none"/>
+		<xs:attribute name="completion" type="xs:string" use="optional"/>
 	</xs:complexType>
 
 <!--
