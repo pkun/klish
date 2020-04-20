@@ -314,7 +314,9 @@ int clish_shell_exec_action(clish_context_t *context, char **out)
 
 	if (!(sym = clish_action__get_builtin(action)))
 		return 0;
-	if (shell->dryrun && !clish_sym__get_permanent(sym))
+	if (shell->dryrun &&
+		!clish_sym__get_permanent(sym) &&
+		!clish_action__get_permanent(action))
 		return 0;
 	if (!(func = clish_sym__get_func(sym))) {
 		fprintf(stderr, "Error: Default ACTION symbol is not specified.\n");

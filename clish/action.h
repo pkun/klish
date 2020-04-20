@@ -26,5 +26,7 @@ _CLISH_SET(action, bool_t, interrupt);
 _CLISH_GET(action, bool_t, interrupt);
 _CLISH_SET(action, bool_t, interactive);
 _CLISH_GET(action, bool_t, interactive);
+_CLISH_SET(action, bool_t, permanent);
+_CLISH_GET(action, bool_t, permanent);
 
 #endif // _clish_action_h

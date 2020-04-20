@@ -35,6 +35,10 @@ static void clish_ptype_init(clish_ptype_t * this,
 	this->preprocess = preprocess;
 	this->range = NULL;
 	this->action = clish_action_new();
+	// PTYPE's ACTION must be 'permanent' i.e. it must be executed whenever
+	// it's a dryrun klish mode or not. Because argument checking is always
+	// needed.
+	clish_action__set_permanent(this->action, BOOL_TRUE);
 
 	if (pattern) {
 		/* set the pattern for this type */
