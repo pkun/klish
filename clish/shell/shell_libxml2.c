@@ -108,21 +108,25 @@ int clish_xmldoc_is_valid(clish_xmldoc_t *doc)
 
 int clish_xmldoc_error_caps(clish_xmldoc_t *doc)
 {
+	doc = doc; // happy compiler
 	return CLISH_XMLERR_NOCAPS;
 }
 
 int clish_xmldoc_get_err_line(clish_xmldoc_t *doc)
 {
+	doc = doc; // happy compiler
 	return -1;
 }
 
 int clish_xmldoc_get_err_col(clish_xmldoc_t *doc)
 {
+	doc = doc; // happy compiler
 	return -1;
 }
 
 const char *clish_xmldoc_get_err_msg(clish_xmldoc_t *doc)
 {
+	doc = doc; // happy compiler
 	return "";
 }
 
@@ -217,7 +221,7 @@ int clish_xmlnode_get_content(clish_xmlnode_t *node, char *content,
 {
 	xmlNode *n;
 	xmlNode *c;
-	int rlen = 0;
+	unsigned int rlen = 0;
 
 	if (content && contentlen && *contentlen)
 		*content = 0;
@@ -261,7 +265,7 @@ int clish_xmlnode_get_content(clish_xmlnode_t *node, char *content,
 int clish_xmlnode_get_name(clish_xmlnode_t *node, char *name, 
 			    unsigned int *namelen)
 {
-	int rlen;
+	unsigned int rlen;
 	xmlNode *n;
 
 	if (name && namelen && *namelen)
@@ -309,6 +313,7 @@ void clish_xmlnode_print(clish_xmlnode_t *node, FILE *out)
 
 void clish_xml_release(void *p)
 {
+	p = p; // happy compiler
 	/* do we allocate memory? not yet. */
 }
 
