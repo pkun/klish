@@ -223,58 +223,61 @@ static bool_t clish_shell_tinyrl_key_enter(tinyrl_t *this, int key)
 	const char *line = tinyrl__get_line(this);
 	bool_t result = BOOL_FALSE;
 	char *errmsg = NULL;
+	tinyrl_history_t *history;
 
-	/* Inc line counter */
+	// Increment line counter
 	if (shell->current_file)
 		shell->current_file->line++;
 
-	/* nothing to pass simply move down the screen */
+	// Nothing to pass simply move down the screen
 	if (!*line) {
 		tinyrl_multi_crlf(this);
 		tinyrl_done(this);
 		return BOOL_TRUE;
 	}
 
-	/* try and parse the command */
+	// Resolve command
 	cmd = clish_shell_resolve_command(shell, line);
+	// Try to complete command if it's not found
 	if (!cmd) {
 		tinyrl_match_e status = clish_shell_tinyrl_complete(this);
 		switch (status) {
 		case TINYRL_MATCH:
 		case TINYRL_MATCH_WITH_EXTENSIONS:
 		case TINYRL_COMPLETED_MATCH:
-			/* re-fetch the line as it may have changed
-			 * due to auto-completion
-			 */
+			// Re-fetch the line as it may have changed
+			// due to auto-completion
 			line = tinyrl__get_line(this);
-			/* get the command to parse? */
 			cmd = clish_shell_resolve_command(shell, line);
-			/*
-			 * We have had a match but it is not a command
-			 * so add a space so as not to confuse the user
-			 */
+			// We have had a match but it is not a command
+			// so add a space so as not to confuse the user
 			if (!cmd)
 				result = tinyrl_insert_text(this, " ");
 			break;
 		default:
-			/* failed to get a unique match... */
-			if (!tinyrl__get_isatty(this)) {
-				/* batch mode */
-				tinyrl_multi_crlf(this);
-				errmsg = "Unknown command";
-			}
+			errmsg = "Unknown command";
 			break;
 		}
 	}
+	// Workaround on ugly history.
+	// The line can be the pointer to history entry. Now we must fix it
+	// and copy string to real buffer.
+	tinyrl_changed_line(this);
+	line = tinyrl__get_line(this);
+
+	// Add any not-null line to history
+	if (tinyrl__get_isatty(this)) {
+		history = tinyrl__get_history(this);
+		tinyrl_history_add(history, tinyrl__get_line(this));
+	}
+	tinyrl_multi_crlf(this);
+
 	if (cmd) {
 		clish_pargv_status_e arg_status;
-		tinyrl_multi_crlf(this);
-		/* we've got a command so check the syntax */
 		arg_status = clish_shell_parse(shell,
 			line, &context->cmd, &context->pargv);
 		switch (arg_status) {
 		case CLISH_LINE_OK:
-			tinyrl_done(this);
 			result = BOOL_TRUE;
 			break;
 		case CLISH_BAD_HISTORY:
@@ -294,22 +297,22 @@ static bool_t clish_shell_tinyrl_key_enter(tinyrl_t *this, int key)
 			break;
 		}
 	}
-	/* If error then print message */
+
+	// If error then print message
 	if (errmsg) {
 		if (tinyrl__get_isatty(this) || !shell->current_file) {
 			fprintf(stderr, "Syntax error: %s\n", errmsg);
-			tinyrl_reset_line_state(this);
 		} else {
 			char *fname = "stdin";
 			if (shell->current_file->fname)
 				fname = shell->current_file->fname;
 			fprintf(stderr, "Syntax error on line %s:%u \"%s\": "
-			"%s\n", fname, shell->current_file->line,
-			line, errmsg);
+			"%s\n", fname, shell->current_file->line, line, errmsg);
 		}
 	}
-	/* keep the compiler happy */
-	key = key;
+
+	tinyrl_done(this);
+	key = key; // Happy compiler
 
 	return result;
 }
@@ -473,7 +476,6 @@ static int clish_shell_execline(clish_shell_t *this, const char *line, char **ou
 {
 	char *str;
 	clish_context_t context;
-	tinyrl_history_t *history;
 	int lerror = 0;
 
 	assert(this);
@@ -509,13 +511,7 @@ static int clish_shell_execline(clish_shell_t *this, const char *line, char **ou
 		};
 		return -1;
 	}
-
-	/* Deal with the history list */
-	if (tinyrl__get_isatty(this->tinyrl)) {
-		history = tinyrl__get_history(this->tinyrl);
-		tinyrl_history_add(history, str);
-	}
-	free(str);
+	lub_string_free(str);
 
 	/* Execute the provided command */
 	if (context.cmd && context.pargv) {

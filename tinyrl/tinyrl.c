@@ -246,7 +246,7 @@ This is called whenever a line is edited in any way.
 It signals that if we are currently viewing a history line we should transfer it
 to the current buffer
 */
-static void changed_line(tinyrl_t * this)
+void tinyrl_changed_line(tinyrl_t * this)
 {
 	/* if the current line is not our buffer then make it so */
 	if (this->line != this->buffer) {
@@ -1091,7 +1091,7 @@ bool_t tinyrl_insert_text(tinyrl_t * this, const char *text)
 	 * If the client wants to change the line ensure that the line and buffer
 	 * references are in sync
 	 */
-	changed_line(this);
+	tinyrl_changed_line(this);
 
 	if ((delta + this->end) > (this->buffer_size)) {
 		/* extend the current buffer */
@@ -1176,7 +1176,7 @@ void tinyrl_delete_text(tinyrl_t * this, unsigned int start, unsigned int end)
 	 * If the client wants to change the line ensure that the line and buffer
 	 * references are in sync
 	 */
-	changed_line(this);
+	tinyrl_changed_line(this);
 
 	/* make sure we play it safe */
 	if (start > end) {

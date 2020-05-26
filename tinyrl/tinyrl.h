@@ -126,6 +126,7 @@ extern void tinyrl_multi_crlf(const tinyrl_t * instance);
 extern void tinyrl_ding(const tinyrl_t * instance);
 
 extern void tinyrl_reset_line_state(tinyrl_t * instance);
+extern void tinyrl_changed_line(tinyrl_t * instance);
 
 extern bool_t tinyrl_insert_text(tinyrl_t * instance, const char *text);
 extern void
